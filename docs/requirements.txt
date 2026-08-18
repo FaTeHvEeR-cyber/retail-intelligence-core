@@ -1,0 +1,45 @@
+# ============================================================
+# Retail Demand Forecasting & Fraud Simulation System
+# requirements.txt
+# Python 3.10+
+# ============================================================
+
+# --- Core data manipulation ---
+pandas>=2.1.0
+numpy>=1.26.0
+
+# --- Statistical inference (Module 2: hypothesis_testing.py) ---
+scipy>=1.11.0
+statsmodels>=0.14.0
+
+# --- Machine learning (Module 3/4: clustering.py, train_models.py, evaluate.py) ---
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+lightgbm>=4.1.0
+joblib>=1.3.0
+
+# --- Time-series / neural forecasting (optional Prophet path) ---
+prophet>=1.1.5
+
+# --- Deep learning (Module 5: fraud_detection.py — Autoencoder/ANN) ---
+torch>=2.1.0
+# tensorflow>=2.15.0        # uncomment if using Keras/TensorFlow instead of PyTorch
+
+# --- Explainability ---
+shap>=0.44.0
+
+# --- Visualization ---
+matplotlib>=3.8.0
+seaborn>=0.13.0
+plotly>=5.18.0
+
+# --- Dashboard / deployment (Module 6: app/app.py) ---
+streamlit>=1.29.0
+
+# --- Utilities ---
+python-dateutil>=2.8.2
+pyyaml>=6.0.1          # for config-driven column mapping (dataset agnosticism)
+tqdm>=4.66.0
+
+# --- Testing (recommended, not in original spec but good practice) ---
+pytest>=7.4.0

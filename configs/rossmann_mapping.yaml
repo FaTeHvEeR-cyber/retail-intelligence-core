@@ -1,0 +1,25 @@
+# Rossmann Store Sales Column Mapping Configuration
+dataset_name: "rossmann"
+columns:
+  date: "Date"
+  store_id: "Store"
+  sales: "Sales"
+  customers: "Customers"
+  open_flag: "Open"
+  promo: "Promo"
+  day_of_week: "DayOfWeek"
+  state_holiday: "StateHoliday"
+  school_holiday: "SchoolHoliday"
+  store_type: "StoreType"
+  assortment: "Assortment"
+  competition_distance: "CompetitionDistance"
+  competition_open_month: "CompetitionOpenSinceMonth"
+  competition_open_year: "CompetitionOpenSinceYear"
+  promo2: "Promo2"
+  promo2_since_week: "Promo2SinceWeek"
+  promo2_since_year: "Promo2SinceYear"
+  promo_interval: "PromoInterval"
+pipeline:
+  lag_days: [7, 14, 21, 30]
+  rolling_windows: [7, 14, 30]
+  validation_weeks: 6

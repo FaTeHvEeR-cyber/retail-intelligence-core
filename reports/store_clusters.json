@@ -1,0 +1,72 @@
+{
+  "k": 4,
+  "feature_cols": [
+    "avg_daily_sales",
+    "sales_cv",
+    "avg_daily_customers",
+    "promo_lift_pct",
+    "promo_day_share"
+  ],
+  "pca_explained_variance_ratio": [
+    0.47372477115843364,
+    0.2720437801671057
+  ],
+  "inertias": {
+    "2": 4184.12488918335,
+    "3": 3169.678646518909,
+    "4": 2398.5300598636873,
+    "5": 2048.351727361283,
+    "6": 1781.2594703401735,
+    "7": 1549.3447117364965,
+    "8": 1372.215764859124,
+    "9": 1275.787102534878,
+    "10": 1187.3088562138444
+  },
+  "silhouette_scores": {
+    "2": 0.2635800049210256,
+    "3": 0.2937639913690709,
+    "4": 0.32304709119636477,
+    "5": 0.27217560878189145,
+    "6": 0.27762135965588297,
+    "7": 0.2767365195125339,
+    "8": 0.26470460853880146,
+    "9": 0.2495627567991596,
+    "10": 0.25914743094904813
+  },
+  "cluster_sizes": {
+    "0": 148,
+    "1": 620,
+    "2": 31,
+    "3": 316
+  },
+  "cluster_profile_means": {
+    "0": {
+      "avg_daily_sales": 10910.6,
+      "sales_cv": 0.23,
+      "avg_daily_customers": 1277.09,
+      "promo_lift_pct": 31.26,
+      "promo_day_share": 0.45
+    },
+    "1": {
+      "avg_daily_sales": 6343.4,
+      "sales_cv": 0.25,
+      "avg_daily_customers": 655.96,
+      "promo_lift_pct": 33.43,
+      "promo_day_share": 0.45
+    },
+    "2": {
+      "avg_daily_sales": 8449.74,
+      "sales_cv": 0.29,
+      "avg_daily_customers": 1422.49,
+      "promo_lift_pct": 27.26,
+      "promo_day_share": 0.39
+    },
+    "3": {
+      "avg_daily_sales": 6074.98,
+      "sales_cv": 0.34,
+      "avg_daily_customers": 641.93,
+      "promo_lift_pct": 62.38,
+      "promo_day_share": 0.45
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "alpha": 0.05,
+  "n_rows_tested": 804110,
+  "tests": [
+    {
+      "test_name": "welch_ttest_promo_vs_non_promo",
+      "statistic": 345.7744,
+      "p_value": 0.0,
+      "alpha": 0.05,
+      "significant": true,
+      "interpretation": "Promotional periods show a statistically significant sales lift of 38.5% (promo mean=8216 vs. non-promo mean=5931, p=0.00e+00). Reject H0: promotions are associated with higher sales."
+    },
+    {
+      "test_name": "anova_storetype",
+      "statistic": 5712.8861,
+      "p_value": 0.0,
+      "alpha": 0.05,
+      "significant": true,
+      "interpretation": "Sales differ significantly across StoreType groups ['a', 'b', 'c', 'd'] (F=5712.8861, p=0.00e+00). Group means: {'a': 6928.0, 'b': 10204.0, 'c': 6935.0, 'd': 6814.0}. Reject H0: StoreType is associated with meaningfully different sales performance."
+    },
+    {
+      "test_name": "anova_assortment",
+      "statistic": 5723.8428,
+      "p_value": 0.0,
+      "alpha": 0.05,
+      "significant": true,
+      "interpretation": "Sales differ significantly across Assortment groups ['a', 'b', 'c'] (F=5723.8428, p=0.00e+00). Group means: {'a': 6627.0, 'b': 8589.0, 'c': 7292.0}. Reject H0: Assortment is associated with meaningfully different sales performance."
+    }
+  ]
+}
