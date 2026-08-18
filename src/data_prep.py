@@ -66,6 +66,24 @@ class ColumnMapping:
     promo_interval: str = "PromoInterval"
 
 
+def load_column_mapping(config_path: str | Path | None = None) -> ColumnMapping:
+    """Load column mapping from yaml file or return default ColumnMapping."""
+    if config_path is None or not Path(config_path).exists():
+        return ColumnMapping()
+    try:
+        import yaml
+        with open(config_path, "r") as f:
+            data = yaml.safe_load(f)
+        if isinstance(data, dict):
+            cols_data = data.get("columns", data)
+            valid_keys = {f.name for f in ColumnMapping.__dataclass_fields__.values()}
+            filtered = {k: v for k, v in cols_data.items() if k in valid_keys}
+            return ColumnMapping(**filtered)
+    except Exception as e:
+        logger.warning("Could not parse config from %s: %s. Using default mapping.", config_path, str(e))
+    return ColumnMapping()
+
+
 @dataclass
 class DataPrepConfig:
     lag_days: list[int] = field(default_factory=lambda: [7, 14, 21, 30])

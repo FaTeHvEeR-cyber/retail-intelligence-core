@@ -1,0 +1,36 @@
+{
+  "validation_rows": 40282,
+  "generated_at": "2026-08-18T19:19:43.346377",
+  "models": [
+    {
+      "model_name": "xgboost",
+      "rmspe": 0.1405,
+      "mae": 627.43,
+      "rmse": 904.21,
+      "r2": 0.9124,
+      "train_time_sec": 7.86,
+      "inference_time_sec": 0.0737,
+      "rows_excluded_zero_sales": 0
+    },
+    {
+      "model_name": "mlp",
+      "rmspe": 0.1761,
+      "mae": 762.54,
+      "rmse": 1073.6,
+      "r2": 0.8765,
+      "train_time_sec": 111.76,
+      "inference_time_sec": 0.093,
+      "rows_excluded_zero_sales": 0
+    },
+    {
+      "model_name": "ridge",
+      "rmspe": 0.2093,
+      "mae": 876.76,
+      "rmse": 1244.92,
+      "r2": 0.8339,
+      "train_time_sec": 3.7,
+      "inference_time_sec": 0.0712,
+      "rows_excluded_zero_sales": 0
+    }
+  ]
+}
