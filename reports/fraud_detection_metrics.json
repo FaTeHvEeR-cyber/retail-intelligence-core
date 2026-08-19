@@ -1,0 +1,21 @@
+{
+  "n_train": 14000,
+  "n_monitor": 6000,
+  "threshold_p95": 0.00094,
+  "threshold_p99": 0.00401,
+  "eval_p95_diagnostic_only": {
+    "precision": 0.292,
+    "recall": 0.4444,
+    "f1": 0.3524,
+    "n_flagged": 274,
+    "n_actual_anomalies": 180
+  },
+  "eval_p99_diagnostic_only": {
+    "precision": 0.4107,
+    "recall": 0.1278,
+    "f1": 0.1949,
+    "n_flagged": 56,
+    "n_actual_anomalies": 180
+  },
+  "alert_report_path": "reports\\fraud_alerts.json"
+}

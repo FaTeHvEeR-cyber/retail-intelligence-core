@@ -1,4 +1,5 @@
 """Root execution wrapper for model evaluation."""
+# pyrefly: ignore [missing-import]
 from src.evaluate import _parse_args, run_evaluation
 
 if __name__ == "__main__":

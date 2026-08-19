@@ -1,7 +1,7 @@
 # Retail Demand Forecasting & Fraud Simulation System
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/pytest-16%20passed-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/pytest-23%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An end-to-end, production-ready retail analytics and forecasting engine combining **multi-model time-series demand forecasting**, **statistical hypothesis testing**, **unsupervised store segmentation (K-Means + PCA)**, and **deep learning anomaly detection (PyTorch Autoencoder)** for Point-of-Sale (POS) return fraud — served via a Power BI-style interactive Streamlit dashboard.
@@ -149,5 +149,5 @@ pytest -v tests/
 - [x] **Phase 1**: Data Engineering, Imputation, Lags/Rolling Windows & Chronological Split
 - [x] **Phase 2**: Hypothesis Testing (Welch's t-test / ANOVA) & Store Clustering (K-Means / PCA)
 - [x] **Phase 3**: Multi-Model Forecasting Benchmark (Ridge, XGBoost, MLP) & Serialization
-- [ ] **Phase 4**: POS Return Fraud Simulation & PyTorch Autoencoder Anomaly Detection
+- [x] **Phase 4**: POS Return Fraud Simulation & PyTorch Autoencoder Anomaly Detection
 - [ ] **Phase 5**: Executive Streamlit BI Dashboard (4-Tab Power BI layout)

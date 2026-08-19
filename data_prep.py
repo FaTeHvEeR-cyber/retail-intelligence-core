@@ -3,6 +3,7 @@ Root wrapper for data_prep module.
 Allows running `python data_prep.py` directly from project root.
 """
 
+# pyrefly: ignore [missing-import]
 from src.data_prep import (
     ColumnMapping,
     DataPrepConfig,
