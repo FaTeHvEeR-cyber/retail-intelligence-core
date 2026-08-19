@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+# pyrefly: ignore [missing-import]
 from app import (
     load_json,
     load_table,
