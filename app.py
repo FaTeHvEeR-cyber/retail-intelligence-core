@@ -123,14 +123,56 @@ def inject_custom_css() -> None:
             --text-sub: #94a3b8;
         }
 
+        /* Force Streamlit top header and toolbar to match dark glassmorphism */
+        header[data-testid="stHeader"],
+        .stAppHeader,
+        [data-testid="stHeader"],
+        div[data-testid="stToolbar"],
+        div[data-testid="stDecoration"] {
+            background: #0b0f19 !important;
+            background-color: #0b0f19 !important;
+            color: #f8fafc !important;
+        }
+
+        /* Top decoration bar */
+        div[data-testid="stDecoration"] {
+            background-image: linear-gradient(90deg, #00f2fe, #4facfe, #8b5cf6, #ec4899, #10b981) !important;
+            height: 3px !important;
+        }
+
         /* App container background with subtle animated ambient gradient */
-        .stApp {
+        .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
             background: radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
                         radial-gradient(circle at 85% 25%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
                         radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
                         #0b0f19 !important;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
             color: var(--text-main) !important;
+        }
+
+        /* Force dark theme on all standard Streamlit widgets */
+        .stSelectbox label, .stRadio label, .stSlider label, .stMultiSelect label, p, span, h1, h2, h3, h4, h5, h6 {
+            color: #f8fafc !important;
+        }
+
+        div[data-baseweb="select"] > div {
+            background-color: rgba(30, 41, 59, 0.85) !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+        }
+
+        div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+        }
+
+        li[role="option"] {
+            color: #e2e8f0 !important;
+        }
+
+        li[role="option"]:hover, li[aria-selected="true"] {
+            background-color: #334155 !important;
+            color: #38bdf8 !important;
         }
 
         /* Top Hero Header Styling */
