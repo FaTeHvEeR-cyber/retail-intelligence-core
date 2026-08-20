@@ -5,20 +5,13 @@ Module 6: Interactive Executive Streamlit BI Dashboard.
 
 Integrates the outputs of Modules 1-5 (data_prep, hypothesis_testing,
 clustering, train_models/evaluate, fraud_detection) into a high-end,
-executive 5-tab dashboard for store management and business stakeholders:
+executive 5-tab dashboard natively compatible with Streamlit's Light & Dark themes:
 
     1. 📊 Executive Overview      - Top-level KPIs, revenue trend, correlation heatmap, hypothesis test insights
     2. 🏬 Store Performance        - Leaderboards, store revenue volatility, deep-dive profiles
     3. 📈 Demand Forecast Explorer - Actual vs. Predicted time series, model benchmarks (RMSPE/latency), mechanics
     4. 🧭 Store Segmentation       - 2D PCA cluster map, business segment profiles, silhouette diagnostics
     5. 🚨 Fraud & Anomaly Feed     - Real-time alert feed, MSE reconstruction distribution, severity filters, QA metrics
-
-Design principles:
-    - High-impact dark glassmorphic design system with animated mesh gradients and glowing accents.
-    - Prominent dataset source pill (Rossmann Store Sales: 1,115 Stores, 1,017,209 Records).
-    - Every non-obvious chart is paired with a clear, plain-language explanation expander.
-    - Transparent disclosures on store-level revenue proxies and offline diagnostic QA figures.
-    - Defensive data loading ensures graceful degradation if specific files are missing.
 
 Execution:
     streamlit run app.py
@@ -52,48 +45,29 @@ if str(SRC_DIR) not in sys.path:
 
 
 # ----------------------------------------------------------------------------
-# Plotly Custom Dark Theme Tokens
+# Adaptive Plotly Theme Styler
 # ----------------------------------------------------------------------------
-PLOT_BG = "rgba(15, 23, 42, 0.6)"
-PAPER_BG = "rgba(0, 0, 0, 0)"
-GRID_COLOR = "rgba(255, 255, 255, 0.07)"
-TEXT_COLOR = "#e2e8f0"
-ACCENT_CYAN = "#00f2fe"
-ACCENT_VIOLET = "#a855f7"
-ACCENT_EMERALD = "#10b981"
-ACCENT_AMBER = "#f59e0b"
-ACCENT_ROSE = "#f43f5e"
-
-
 def apply_plotly_theme(fig: go.Figure, height: int | None = None) -> go.Figure:
-    """Applies a consistent, polished dark glassmorphic styling to Plotly figures."""
+    """Applies a clean, responsive transparent layout that adapts to both light and dark mode."""
     layout_update = dict(
-        paper_bgcolor=PAPER_BG,
-        plot_bgcolor=PLOT_BG,
-        font=dict(family="Plus Jakarta Sans, Outfit, sans-serif", color=TEXT_COLOR, size=12),
+        paper_bgcolor="rgba(0, 0, 0, 0)",
+        plot_bgcolor="rgba(128, 128, 128, 0.04)",
+        font=dict(family="Plus Jakarta Sans, Outfit, sans-serif", size=12),
         margin=dict(l=40, r=30, t=50, b=40),
         xaxis=dict(
-            gridcolor=GRID_COLOR,
-            zerolinecolor=GRID_COLOR,
-            tickfont=dict(color="#94a3b8"),
-            title_font=dict(color="#cbd5e1", size=13),
+            gridcolor="rgba(128, 128, 128, 0.15)",
+            zerolinecolor="rgba(128, 128, 128, 0.15)",
+            title_font=dict(size=13),
         ),
         yaxis=dict(
-            gridcolor=GRID_COLOR,
-            zerolinecolor=GRID_COLOR,
-            tickfont=dict(color="#94a3b8"),
-            title_font=dict(color="#cbd5e1", size=13),
+            gridcolor="rgba(128, 128, 128, 0.15)",
+            zerolinecolor="rgba(128, 128, 128, 0.15)",
+            title_font=dict(size=13),
         ),
         legend=dict(
-            bgcolor="rgba(15, 23, 42, 0.8)",
-            bordercolor="rgba(255, 255, 255, 0.1)",
+            bgcolor="rgba(128, 128, 128, 0.08)",
+            bordercolor="rgba(128, 128, 128, 0.18)",
             borderwidth=1,
-            font=dict(color="#e2e8f0"),
-        ),
-        hoverlabel=dict(
-            bgcolor="#1e293b",
-            bordercolor=ACCENT_CYAN,
-            font=dict(family="Plus Jakarta Sans, sans-serif", color="#ffffff", size=12),
         ),
     )
     if height is not None:
@@ -103,87 +77,26 @@ def apply_plotly_theme(fig: go.Figure, height: int | None = None) -> go.Figure:
 
 
 # ----------------------------------------------------------------------------
-# Custom CSS Theme & Visual Injector
+# Theme-Adaptive Custom CSS
 # ----------------------------------------------------------------------------
 def inject_custom_css() -> None:
-    """Injects high-end glassmorphism, animated gradients, and custom typography."""
+    """Injects high-end glassmorphism that naturally adapts to Streamlit's Light/Dark mode."""
     st.markdown(
         """
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-        :root {
-            --bg-dark: #0b0f19;
-            --card-bg: rgba(17, 24, 39, 0.72);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --accent-cyan: #00f2fe;
-            --accent-purple: #8b5cf6;
-            --accent-emerald: #10b981;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
+        html, body, [class*="css"] {
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* Force Streamlit top header and toolbar to match dark glassmorphism */
-        header[data-testid="stHeader"],
-        .stAppHeader,
-        [data-testid="stHeader"],
-        div[data-testid="stToolbar"],
-        div[data-testid="stDecoration"] {
-            background: #0b0f19 !important;
-            background-color: #0b0f19 !important;
-            color: #f8fafc !important;
-        }
-
-        /* Top decoration bar */
-        div[data-testid="stDecoration"] {
-            background-image: linear-gradient(90deg, #00f2fe, #4facfe, #8b5cf6, #ec4899, #10b981) !important;
-            height: 3px !important;
-        }
-
-        /* App container background with subtle animated ambient gradient */
-        .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
-            background: radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 85% 25%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
-                        #0b0f19 !important;
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
-            color: var(--text-main) !important;
-        }
-
-        /* Force dark theme on all standard Streamlit widgets */
-        .stSelectbox label, .stRadio label, .stSlider label, .stMultiSelect label, p, span, h1, h2, h3, h4, h5, h6 {
-            color: #f8fafc !important;
-        }
-
-        div[data-baseweb="select"] > div {
-            background-color: rgba(30, 41, 59, 0.85) !important;
-            border-color: rgba(255, 255, 255, 0.15) !important;
-            color: #ffffff !important;
-        }
-
-        div[data-baseweb="popover"], div[data-baseweb="menu"], ul[role="listbox"] {
-            background-color: #1e293b !important;
-            color: #ffffff !important;
-        }
-
-        li[role="option"] {
-            color: #e2e8f0 !important;
-        }
-
-        li[role="option"]:hover, li[aria-selected="true"] {
-            background-color: #334155 !important;
-            color: #38bdf8 !important;
-        }
-
-        /* Top Hero Header Styling */
         .hero-banner {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+            border: 1px solid rgba(128, 128, 128, 0.2);
             border-radius: 20px;
             padding: 28px 32px;
             margin-bottom: 24px;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
             position: relative;
             overflow: hidden;
         }
@@ -192,7 +105,7 @@ def inject_custom_css() -> None:
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, #00f2fe, #4facfe, #8b5cf6, #ec4899, #10b981);
+            background: linear-gradient(90deg, #0284c7, #6366f1, #8b5cf6, #ec4899, #10b981);
         }
 
         .hero-badge {
@@ -206,7 +119,7 @@ def inject_custom_css() -> None:
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 0.08em;
-            color: #34d399;
+            color: #10b981;
             margin-bottom: 12px;
         }
 
@@ -228,16 +141,13 @@ def inject_custom_css() -> None:
             font-family: 'Outfit', sans-serif !important;
             font-size: 2.2rem !important;
             font-weight: 800 !important;
-            background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             margin: 0 0 8px 0 !important;
             letter-spacing: -0.02em;
         }
 
         .hero-subtitle {
             font-size: 0.95rem;
-            color: #94a3b8;
+            opacity: 0.85;
             margin-bottom: 16px;
             max-width: 900px;
             line-height: 1.5;
@@ -247,20 +157,17 @@ def inject_custom_css() -> None:
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(128, 128, 128, 0.1);
+            border: 1px solid rgba(128, 128, 128, 0.2);
             border-radius: 12px;
             padding: 8px 16px;
             font-size: 0.85rem;
-            color: #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .dataset-pill strong {
-            color: #38bdf8;
+            color: #0284c7;
         }
 
-        /* Glass KPI Cards */
         .kpi-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -269,21 +176,17 @@ def inject_custom_css() -> None:
         }
 
         .glass-card {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.75) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+            border: 1px solid rgba(128, 128, 128, 0.18);
             border-radius: 16px;
             padding: 20px;
-            backdrop-filter: blur(16px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            transition: all 0.25s ease-in-out;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 8px 24px -5px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .glass-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(56, 189, 248, 0.3);
-            box-shadow: 0 16px 32px -8px rgba(0, 242, 254, 0.15);
+            box-shadow: 0 14px 28px -5px rgba(0, 0, 0, 0.12);
         }
 
         .glass-card-top {
@@ -297,134 +200,63 @@ def inject_custom_css() -> None:
             font-size: 0.78rem;
             font-weight: 700;
             letter-spacing: 0.06em;
-            color: #94a3b8;
+            opacity: 0.75;
             text-transform: uppercase;
-        }
-
-        .glass-card-icon {
-            font-size: 1.3rem;
-            opacity: 0.9;
         }
 
         .glass-card-value {
             font-family: 'Outfit', sans-serif;
             font-size: 1.85rem;
             font-weight: 800;
-            color: #ffffff;
             letter-spacing: -0.02em;
             margin-bottom: 6px;
         }
 
         .glass-card-sub {
             font-size: 0.78rem;
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            opacity: 0.7;
         }
 
-        .badge-positive {
-            color: #34d399;
-            font-weight: 600;
-        }
+        .badge-positive { color: #10b981; font-weight: 600; }
+        .badge-warning { color: #f59e0b; font-weight: 600; }
+        .badge-danger { color: #ef4444; font-weight: 600; }
 
-        .badge-warning {
-            color: #fbbf24;
-            font-weight: 600;
-        }
-
-        .badge-danger {
-            color: #f87171;
-            font-weight: 600;
-        }
-
-        /* Insight Callout Cards */
         .insight-box {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.65) 100%);
-            border-left: 4px solid var(--accent-cyan);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+            border-left: 4px solid #0284c7;
+            border-top: 1px solid rgba(128, 128, 128, 0.15);
+            border-right: 1px solid rgba(128, 128, 128, 0.15);
+            border-bottom: 1px solid rgba(128, 128, 128, 0.15);
             border-radius: 0 12px 12px 0;
             padding: 16px 20px;
             margin-bottom: 12px;
-            backdrop-filter: blur(10px);
         }
 
         .insight-title {
             font-weight: 700;
             font-size: 0.95rem;
-            color: #f1f5f9;
             margin-bottom: 4px;
         }
 
         .insight-body {
             font-size: 0.84rem;
-            color: #94a3b8;
+            opacity: 0.85;
             line-height: 1.45;
         }
 
-        /* Streamlit Tabs Customization */
         .stTabs [data-baseweb="tab-list"] {
             gap: 8px;
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+            border: 1px solid rgba(128, 128, 128, 0.18);
             padding: 6px;
             border-radius: 16px;
-            backdrop-filter: blur(12px);
             margin-bottom: 24px;
         }
 
         .stTabs [data-baseweb="tab"] {
             border-radius: 10px;
-            color: #94a3b8;
-            font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 600;
-            font-size: 0.9rem;
             padding: 10px 18px;
-            transition: all 0.2s ease;
-        }
-
-        .stTabs [data-baseweb="tab"]:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .stTabs [aria-selected="true"] {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(139, 92, 246, 0.25) 100%) !important;
-            color: #38bdf8 !important;
-            border: 1px solid rgba(56, 189, 248, 0.4) !important;
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
-        }
-
-        /* Section Headings */
-        h2, h3 {
-            font-family: 'Outfit', sans-serif !important;
-            color: #f8fafc !important;
-            letter-spacing: -0.01em;
-        }
-
-        /* Dataframe styling */
-        .stDataFrame {
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            border-radius: 12px !important;
-            overflow: hidden !important;
-        }
-
-        /* Expander styling */
-        .streamlit-expanderHeader {
-            background: rgba(30, 41, 59, 0.5) !important;
-            border-radius: 10px !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            color: #cbd5e1 !important;
-            font-weight: 600 !important;
-        }
-
-        .streamlit-expanderContent {
-            background: rgba(15, 23, 42, 0.6) !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            border-radius: 0 0 10px 10px !important;
-            padding: 16px !important;
         }
         </style>
         """,
@@ -526,7 +358,6 @@ def build_val_predictions() -> pd.DataFrame | None:
         "Actual": val_df["Sales"],
     })
 
-    # Find models from manifest or directory
     manifest = load_json("../models/latest_manifest.json") or load_json("latest_manifest.json")
     model_files: dict[str, Path] = {}
 
@@ -592,14 +423,13 @@ def render_executive_overview() -> None:
         if "severity" in fraud_df.columns and "return_amount" in fraud_df.columns:
             fraud_exposure = float(fraud_df.loc[fraud_df["severity"] == "high", "return_amount"].sum())
 
-    # Glass KPI Cards Grid
     st.markdown(
         f"""
         <div class="kpi-container">
             <div class="glass-card">
                 <div class="glass-card-top">
                     <span class="glass-card-label">Total Chain Revenue</span>
-                    <span class="glass-card-icon">💶</span>
+                    <span>💶</span>
                 </div>
                 <div class="glass-card-value">€{total_revenue / 1e9:.2f}B</div>
                 <div class="glass-card-sub"><span class="badge-positive">€{total_revenue:,.0f}</span> gross total</div>
@@ -607,9 +437,9 @@ def render_executive_overview() -> None:
             <div class="glass-card">
                 <div class="glass-card-top">
                     <span class="glass-card-label">Historical Growth Trend</span>
-                    <span class="glass-card-icon">📈</span>
+                    <span>📈</span>
                 </div>
-                <div class="glass-card-value" style="color: {'#34d399' if revenue_trend_pct >= 0 else '#f87171'};">
+                <div class="glass-card-value" style="color: {'#10b981' if revenue_trend_pct >= 0 else '#ef4444'};">
                     {revenue_trend_pct:+.1f}%
                 </div>
                 <div class="glass-card-sub">2nd half vs 1st half history</div>
@@ -617,7 +447,7 @@ def render_executive_overview() -> None:
             <div class="glass-card">
                 <div class="glass-card-top">
                     <span class="glass-card-label">Avg Daily Customers</span>
-                    <span class="glass-card-icon">👥</span>
+                    <span>👥</span>
                 </div>
                 <div class="glass-card-value">{avg_customers:,.0f}</div>
                 <div class="glass-card-sub">Per store operating day</div>
@@ -625,9 +455,9 @@ def render_executive_overview() -> None:
             <div class="glass-card">
                 <div class="glass-card-top">
                     <span class="glass-card-label">Flagged Fraud Exposure</span>
-                    <span class="glass-card-icon">🚨</span>
+                    <span>🚨</span>
                 </div>
-                <div class="glass-card-value" style="color: #fbbf24;">€{fraud_exposure:,.0f}</div>
+                <div class="glass-card-value" style="color: #f59e0b;">€{fraud_exposure:,.0f}</div>
                 <div class="glass-card-sub"><span class="badge-warning">High Risk</span> Return Volume</div>
             </div>
         </div>
@@ -635,7 +465,6 @@ def render_executive_overview() -> None:
         unsafe_allow_html=True,
     )
 
-    # Revenue Trend Section
     st.markdown("### 📈 Revenue Trend Over Time")
     granularity = st.radio("Aggregation Frequency:", ["Daily", "Weekly", "Monthly", "Quarterly"], horizontal=True, index=1)
     freq_map = {"Daily": "D", "Weekly": "W", "Monthly": "ME", "Quarterly": "QE"}
@@ -653,15 +482,10 @@ def render_executive_overview() -> None:
         labels={"Sales": "Revenue (€)", "Date": "Timeline"},
         title=f"Total Chain Sales Velocity ({granularity})",
     )
-    fig_trend.update_traces(
-        line=dict(width=2.5, color=ACCENT_CYAN),
-        fillcolor="rgba(0, 242, 254, 0.12)",
-    )
+    fig_trend.update_traces(line=dict(width=2.5, color="#0284c7"), fillcolor="rgba(2, 132, 199, 0.12)")
     apply_plotly_theme(fig_trend, height=380)
     st.plotly_chart(fig_trend, use_container_width=True)
-    st.caption("Total revenue aggregate across operating stores. Visualizes structural seasonality, holiday spikes, and macro cycles.")
 
-    # Correlation Matrix
     st.markdown("---")
     st.markdown("### 🔬 Multi-Factor Demand Correlation Matrix")
     corr_cols = {
@@ -685,14 +509,10 @@ def render_executive_overview() -> None:
     )
     apply_plotly_theme(fig_corr, height=420)
     st.plotly_chart(fig_corr, use_container_width=True)
-    st.caption("Dark blue signifies high positive correlation. Footfall and Promotional Campaigns show dominant correlation with sales volume.")
 
-    # Statistical Hypotheses
     if hypo and "tests" in hypo:
         st.markdown("---")
         st.markdown("### 🧪 Formally Tested Statistical Hypotheses (α = 0.05)")
-        st.caption("Rigorous hypothesis validation using Welch's t-test and One-Way ANOVA.")
-
         for test in hypo["tests"]:
             test_name = test.get("test_name", "").replace("_", " ").title()
             stat_val = test.get("statistic", 0.0)
@@ -700,7 +520,7 @@ def render_executive_overview() -> None:
             st.markdown(
                 f"""
                 <div class="insight-box">
-                    <div class="insight-title">✓ {test_name} — <span style="color: #34d399;">Significant (p < 10⁻¹⁵)</span></div>
+                    <div class="insight-title">✓ {test_name} — <span style="color: #10b981;">Significant (p < 10⁻¹⁵)</span></div>
                     <div class="insight-body">
                         <strong>Test Statistic:</strong> {stat_val:,.2f} &nbsp;|&nbsp;
                         <strong>Conclusion:</strong> {interp}
@@ -716,9 +536,7 @@ def render_executive_overview() -> None:
 # ----------------------------------------------------------------------------
 def render_store_performance() -> None:
     st.subheader("🏬 Store Performance & Volatility Matrix")
-    st.caption(
-        "Individual store revenue benchmarking, volume leaders, and coefficient of variation volatility metrics."
-    )
+    st.caption("Individual store revenue benchmarking, volume leaders, and coefficient of variation volatility metrics.")
 
     clusters_df = load_table("store_clusters", directory="reports")
     store_meta = load_store_metadata()
@@ -778,8 +596,6 @@ def render_store_performance() -> None:
 
     st.markdown("---")
     st.markdown("### 📊 Revenue Volatility Ranking (Coefficient of Variation)")
-    st.caption("CV = Standard Deviation / Mean. Identifies locations with unpredictable demand swings.")
-
     volatile_df = df.nlargest(15, "sales_cv").sort_values("sales_cv", ascending=True)
     fig_vol = px.bar(
         volatile_df,
@@ -842,7 +658,7 @@ def render_forecast_explorer() -> None:
                         <span class="glass-card-label">Winning Model</span>
                         <span>🏆</span>
                     </div>
-                    <div class="glass-card-value" style="color: #34d399;">{best_model.upper()}</div>
+                    <div class="glass-card-value" style="color: #10b981;">{best_model.upper()}</div>
                     <div class="glass-card-sub">Lowest validation RMSPE across all 1,115 stores.</div>
                 </div>
                 """,
@@ -958,11 +774,10 @@ def render_segmentation() -> None:
         hover_data=["Store", "avg_daily_sales", "sales_cv", "avg_daily_customers", "promo_lift_pct"],
         labels={"pca_x": "PCA Component 1", "pca_y": "PCA Component 2", "cluster_label": "Segment"},
         title="2D PCA Behavioral Projection of 1,115 Retail Stores",
-        color_discrete_sequence=["#00f2fe", "#a855f7", "#10b981", "#f59e0b"],
+        color_discrete_sequence=["#0284c7", "#8b5cf6", "#10b981", "#f59e0b"],
     )
     apply_plotly_theme(fig_pca, height=480)
     st.plotly_chart(fig_pca, use_container_width=True)
-    st.caption("Stores mapped closely together share behavioral volume, customer traffic, volatility, and promo response patterns.")
 
     st.markdown("---")
     st.markdown("### 🏢 Business Archetype Segment Profiles")
@@ -988,15 +803,15 @@ def render_segmentation() -> None:
                         <span class="glass-card-label">Cluster {c_id}</span>
                         <span>{cluster_icons.get(c_id, '🏬')}</span>
                     </div>
-                    <div style="font-size: 1.05rem; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">
+                    <div style="font-size: 1.05rem; font-weight: 700; color: #0284c7; margin-bottom: 6px;">
                         {cluster_names.get(c_id, f'Segment {c_id}')}
                     </div>
                     <div class="glass-card-sub" style="margin-bottom: 12px;">Stores: <strong>{cluster_sizes.get(c_id, 'N/A')}</strong></div>
-                    <div style="font-size: 1.25rem; font-weight: 800; color: #ffffff;">€{p_data.get('avg_daily_sales', 0):,.0f}</div>
+                    <div class="glass-card-value">€{p_data.get('avg_daily_sales', 0):,.0f}</div>
                     <div class="glass-card-sub">Avg Daily Sales</div>
-                    <div style="margin-top: 10px; font-size: 0.82rem; color: #94a3b8;">
+                    <div style="margin-top: 10px; font-size: 0.82rem;">
                         • Footfall: <strong>{p_data.get('avg_daily_customers', 0):,.0f}</strong><br>
-                        • Promo Lift: <strong style="color: #34d399;">{p_data.get('promo_lift_pct', 0):+.1f}%</strong><br>
+                        • Promo Lift: <strong style="color: #10b981;">{p_data.get('promo_lift_pct', 0):+.1f}%</strong><br>
                         • Volatility: <strong>{p_data.get('sales_cv', 0):.2f}</strong>
                     </div>
                 </div>
@@ -1061,7 +876,7 @@ def render_fraud_feed() -> None:
                     <span class="glass-card-label">Flagged Anomalies</span>
                     <span>⚠️</span>
                 </div>
-                <div class="glass-card-value" style="color: #fbbf24;">{n_flagged_p95:,}</div>
+                <div class="glass-card-value" style="color: #f59e0b;">{n_flagged_p95:,}</div>
                 <div class="glass-card-sub">Top 5% Anomaly Scores (p95+)</div>
             </div>
             <div class="glass-card">
@@ -1069,7 +884,7 @@ def render_fraud_feed() -> None:
                     <span class="glass-card-label">High Severity Exposure</span>
                     <span>🚨</span>
                 </div>
-                <div class="glass-card-value" style="color: #f87171;">€{high_sev_exposure:,.0f}</div>
+                <div class="glass-card-value" style="color: #ef4444;">€{high_sev_exposure:,.0f}</div>
                 <div class="glass-card-sub">Refund value flagged high risk</div>
             </div>
         </div>
@@ -1077,7 +892,6 @@ def render_fraud_feed() -> None:
         unsafe_allow_html=True,
     )
 
-    st.markdown("---")
     st.markdown("### 📊 Reconstruction Error (Anomaly Score) Distribution")
     fig_hist = px.histogram(
         df_alerts,
@@ -1091,9 +905,9 @@ def render_fraud_feed() -> None:
         p95_val = metrics.get("threshold_p95")
         p99_val = metrics.get("threshold_p99")
         if p95_val is not None:
-            fig_hist.add_vline(x=p95_val, line_dash="dash", line_color="#fbbf24", annotation_text=f"p95 ({p95_val:.5f})")
+            fig_hist.add_vline(x=p95_val, line_dash="dash", line_color="#f59e0b", annotation_text=f"p95 ({p95_val:.5f})")
         if p99_val is not None:
-            fig_hist.add_vline(x=p99_val, line_dash="dash", line_color="#f87171", annotation_text=f"p99 ({p99_val:.5f})")
+            fig_hist.add_vline(x=p99_val, line_dash="dash", line_color="#ef4444", annotation_text=f"p99 ({p99_val:.5f})")
     apply_plotly_theme(fig_hist, height=360)
     st.plotly_chart(fig_hist, use_container_width=True)
 
@@ -1154,7 +968,7 @@ def main() -> None:
         initial_sidebar_state="collapsed",
     )
 
-    # Inject visual styling
+    # Inject adaptive theme styling
     inject_custom_css()
 
     # Executive Hero Banner
