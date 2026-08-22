@@ -258,53 +258,37 @@ html, body, [class*="css"], .stApp {
 
 /* Navigation Tabs - Segmented Enterprise Button Pills */
 [data-testid="stTabs"] [data-baseweb="tab-list"],
-.stTabs [data-baseweb="tab-list"],
 div[data-baseweb="tab-list"],
 div[role="tablist"] {
     gap: 12px !important;
     background: transparent !important;
     border: none !important;
     padding: 6px 0 !important;
-    margin-bottom: 24px !important;
+    margin-bottom: 20px !important;
     display: flex !important;
 }
 
-/* Completely eliminate red underline and highlight strips */
+/* Hide BaseWeb underline/highlight bar completely */
 [data-testid="stTabs"] [data-baseweb="tab-border"],
 [data-testid="stTabs"] [data-baseweb="tab-highlight"],
 div[data-baseweb="tab-border"],
-div[data-baseweb="tab-highlight"],
-[data-testid="stTabs"] [role="tablist"] ~ div,
-[data-testid="stTabs"] [role="tablist"] + div,
-[data-testid="stTabs"] [role="tablist"] > div[aria-hidden="true"],
-[data-testid="stTabs"] [role="tablist"] div[aria-hidden="true"],
-[data-testid="stTabs"] hr,
-div[data-testid="stTabs"] > div > div > div:last-child {
+div[data-baseweb="tab-highlight"] {
     display: none !important;
     height: 0 !important;
-    max-height: 0 !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
+    background-color: transparent !important;
     border: none !important;
-    background: transparent !important;
 }
 
-[data-testid="stTabs"] button[role="tab"]::after,
-[data-testid="stTabs"] button[role="tab"]::before,
-[data-testid="stTabs"] button[data-baseweb="tab"]::after,
-[data-testid="stTabs"] button[data-baseweb="tab"]::before,
-button[role="tab"]::after,
-button[role="tab"]::before {
-    display: none !important;
-    content: none !important;
-    border: none !important;
+/* Ensure tab contents are always 100% visible */
+[data-testid="stTabs"] [data-testid="stTabContent"],
+[data-testid="stTabs"] [role="tabpanel"] {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 [data-testid="stTabs"] button[data-baseweb="tab"],
-[data-testid="stTabs"] button[role="tab"],
-[data-testid="stTabs"] [role="tab"],
-.stTabs [data-baseweb="tab"],
-div[data-baseweb="tab"] {
+[data-testid="stTabs"] button[role="tab"] {
     border-radius: 8px !important;
     font-weight: 600 !important;
     font-size: 0.88rem !important;
@@ -318,8 +302,7 @@ div[data-baseweb="tab"] {
 }
 
 [data-testid="stTabs"] button[data-baseweb="tab"] p,
-[data-testid="stTabs"] button[role="tab"] p,
-[data-testid="stTabs"] [role="tab"] p {
+[data-testid="stTabs"] button[role="tab"] p {
     font-size: 0.88rem !important;
     font-weight: 600 !important;
     margin: 0 !important;
@@ -327,8 +310,7 @@ div[data-baseweb="tab"] {
 }
 
 [data-testid="stTabs"] button[data-baseweb="tab"]:hover,
-[data-testid="stTabs"] button[role="tab"]:hover,
-[data-testid="stTabs"] [role="tab"]:hover {
+[data-testid="stTabs"] button[role="tab"]:hover {
     border-color: rgba(2, 132, 199, 0.5) !important;
     background: rgba(2, 132, 199, 0.12) !important;
     color: #0284c7 !important;
@@ -336,23 +318,20 @@ div[data-baseweb="tab"] {
 }
 
 [data-testid="stTabs"] button[data-baseweb="tab"]:hover p,
-[data-testid="stTabs"] button[role="tab"]:hover p,
-[data-testid="stTabs"] [role="tab"]:hover p {
+[data-testid="stTabs"] button[role="tab"]:hover p {
     color: #0284c7 !important;
 }
 
 [data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"],
-[data-testid="stTabs"] button[role="tab"][aria-selected="true"],
-[data-testid="stTabs"] [role="tab"][aria-selected="true"] {
+[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
     background: #0284c7 !important;
     color: #ffffff !important;
-    border-color: #0284c7 !important;
+    border: 1px solid #0284c7 !important;
     box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.35) !important;
 }
 
 [data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] p,
-[data-testid="stTabs"] button[role="tab"][aria-selected="true"] p,
-[data-testid="stTabs"] [role="tab"][aria-selected="true"] p {
+[data-testid="stTabs"] button[role="tab"][aria-selected="true"] p {
     color: #ffffff !important;
     font-weight: 700 !important;
 }
