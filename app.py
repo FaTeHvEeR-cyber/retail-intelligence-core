@@ -46,40 +46,30 @@ if str(SRC_DIR) not in sys.path:
 # ----------------------------------------------------------------------------
 # Adaptive Plotly Theme Styler
 # ----------------------------------------------------------------------------
-def apply_plotly_theme(fig: go.Figure, height: int | None = None, theme_mode: str | None = None) -> go.Figure:
+def apply_plotly_theme(fig: go.Figure, height: int | None = None) -> go.Figure:
     """Applies a clean, responsive transparent layout with professional typography."""
-    if theme_mode is None:
-        theme_mode = st.session_state.get("theme_mode", "Dark") if hasattr(st, "session_state") else "Dark"
-
-    is_dark = (theme_mode == "Dark")
-    text_color = "#f8fafc" if is_dark else "#0f172a"
-    muted_color = "#94a3b8" if is_dark else "#64748b"
-    grid_color = "rgba(255, 255, 255, 0.08)" if is_dark else "rgba(0, 0, 0, 0.07)"
-    legend_bg = "rgba(18, 24, 38, 0.7)" if is_dark else "rgba(255, 255, 255, 0.85)"
-    legend_border = "rgba(255, 255, 255, 0.12)" if is_dark else "rgba(226, 232, 240, 0.9)"
-
     layout_update = dict(
         paper_bgcolor="rgba(0, 0, 0, 0)",
-        plot_bgcolor="rgba(128, 128, 128, 0.03)",
-        font=dict(family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", size=12, color=text_color),
+        plot_bgcolor="rgba(128, 128, 128, 0.04)",
+        font=dict(family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", size=12),
         margin=dict(l=45, r=25, t=45, b=40),
         xaxis=dict(
-            gridcolor=grid_color,
-            zerolinecolor=grid_color,
-            tickfont=dict(family="JetBrains Mono, monospace", size=11, color=muted_color),
-            title_font=dict(size=12, family="Inter, sans-serif", color=text_color),
+            gridcolor="rgba(128, 128, 128, 0.15)",
+            zerolinecolor="rgba(128, 128, 128, 0.15)",
+            tickfont=dict(family="JetBrains Mono, monospace", size=11),
+            title_font=dict(size=12, family="Inter, sans-serif"),
         ),
         yaxis=dict(
-            gridcolor=grid_color,
-            zerolinecolor=grid_color,
-            tickfont=dict(family="JetBrains Mono, monospace", size=11, color=muted_color),
-            title_font=dict(size=12, family="Inter, sans-serif", color=text_color),
+            gridcolor="rgba(128, 128, 128, 0.15)",
+            zerolinecolor="rgba(128, 128, 128, 0.15)",
+            tickfont=dict(family="JetBrains Mono, monospace", size=11),
+            title_font=dict(size=12, family="Inter, sans-serif"),
         ),
         legend=dict(
-            bgcolor=legend_bg,
-            bordercolor=legend_border,
+            bgcolor="rgba(128, 128, 128, 0.08)",
+            bordercolor="rgba(128, 128, 128, 0.18)",
             borderwidth=1,
-            font=dict(family="Inter, sans-serif", size=11, color=text_color),
+            font=dict(family="Inter, sans-serif", size=11),
         ),
         colorway=["#0284c7", "#6366f1", "#10b981", "#f59e0b", "#ef4444"],
     )
@@ -92,78 +82,43 @@ def apply_plotly_theme(fig: go.Figure, height: int | None = None, theme_mode: st
 # ----------------------------------------------------------------------------
 # Theme-Adaptive Custom CSS
 # ----------------------------------------------------------------------------
-def inject_custom_css(theme_mode: str = "Dark") -> None:
-    """Injects high-end enterprise typography, JetBrains Mono numbers, and dynamic Light/Dark mode styling."""
-    is_dark = (theme_mode == "Dark")
-
-    bg_color = "#0b0f19" if is_dark else "#f8fafc"
-    bg_gradients = (
-        "radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 50%), "
-        "radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.07) 0px, transparent 50%), "
-        "radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%)"
-        if is_dark else
-        "radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.05) 0px, transparent 50%), "
-        "radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.04) 0px, transparent 50%), "
-        "radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.03) 0px, transparent 50%)"
-    )
-    text_color = "#f8fafc" if is_dark else "#0f172a"
-    sub_color = "#94a3b8" if is_dark else "#64748b"
-    card_bg = "rgba(18, 24, 38, 0.7)" if is_dark else "rgba(255, 255, 255, 0.9)"
-    card_border = "rgba(255, 255, 255, 0.08)" if is_dark else "rgba(226, 232, 240, 0.9)"
-    card_shadow = "0 4px 20px -2px rgba(0, 0, 0, 0.35)" if is_dark else "0 4px 16px -2px rgba(0, 0, 0, 0.06)"
-    pill_bg = "rgba(255, 255, 255, 0.05)" if is_dark else "rgba(0, 0, 0, 0.04)"
-    pill_border = "rgba(255, 255, 255, 0.1)" if is_dark else "rgba(0, 0, 0, 0.08)"
-    tab_list_bg = "rgba(18, 24, 38, 0.6)" if is_dark else "rgba(241, 245, 249, 0.9)"
-    tab_list_border = "rgba(255, 255, 255, 0.08)" if is_dark else "rgba(226, 232, 240, 0.9)"
-    tab_text = "#94a3b8" if is_dark else "#64748b"
-    tab_selected_bg = "rgba(2, 132, 199, 0.18)" if is_dark else "rgba(2, 132, 199, 0.12)"
-    tab_selected_text = "#38bdf8" if is_dark else "#0284c7"
-
-    css_code = f"""
+def inject_custom_css() -> None:
+    """Injects high-end enterprise typography, JetBrains Mono numbers, and adaptive styling."""
+    css_code = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-html, body, [class*="css"], .stApp {{
+html, body, [class*="css"], .stApp {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-}}
-
-/* Dynamic Canvas with Subtle Ambient Radial Glows */
-.stApp {{
-    background-color: {bg_color} !important;
-    background-image: {bg_gradients} !important;
-    background-attachment: fixed !important;
-    color: {text_color} !important;
-}}
+}
 
 /* Monospace Numbers Across All Metrics and Financials */
-.mono-num, code, pre, .glass-card-value, .metric-value, [data-testid="stMetricValue"] {{
+.mono-num, code, pre, .glass-card-value, .metric-value, [data-testid="stMetricValue"] {
     font-family: 'JetBrains Mono', monospace !important;
     font-variant-numeric: tabular-nums !important;
-}}
+}
 
-.hero-banner {{
-    background: {card_bg} !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid {card_border} !important;
+.hero-banner {
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+    border: 1px solid rgba(128, 128, 128, 0.2);
     border-radius: 14px;
     padding: 24px 28px;
     margin-bottom: 20px;
-    box-shadow: {card_shadow};
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
-}}
+}
 
-.hero-banner::before {{
+.hero-banner::before {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, #0284c7, #6366f1, #8b5cf6, #10b981);
-}}
+}
 
-.hero-badge {{
+.hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -176,166 +131,154 @@ html, body, [class*="css"], .stApp {{
     letter-spacing: 0.08em;
     color: #10b981;
     margin-bottom: 10px;
-}}
+}
 
-.pulse-dot {{
+.pulse-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background-color: #10b981;
-}}
+}
 
-.hero-title {{
+.hero-title {
     font-size: 1.85rem !important;
     font-weight: 800 !important;
     margin: 0 0 6px 0 !important;
     letter-spacing: -0.02em;
-    color: {text_color} !important;
-}}
+    color: var(--text-color, inherit);
+}
 
-.hero-subtitle {{
+.hero-subtitle {
     font-size: 0.88rem;
-    color: {sub_color};
+    opacity: 0.85;
     margin-bottom: 12px;
     max-width: 920px;
     line-height: 1.45;
-}}
+}
 
-.dataset-pill {{
+.dataset-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: {pill_bg};
-    border: 1px solid {pill_border};
+    background: rgba(128, 128, 128, 0.1);
+    border: 1px solid rgba(128, 128, 128, 0.2);
     border-radius: 6px;
     padding: 4px 12px;
     font-size: 0.78rem;
-    color: {sub_color};
-}}
+}
 
-.dataset-pill strong {{
+.dataset-pill strong {
     color: #0284c7;
-}}
+}
 
-.kpi-container {{
+.kpi-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px;
     margin-bottom: 20px;
-}}
+}
 
-.glass-card {{
-    background: {card_bg} !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid {card_border} !important;
-    border-radius: 12px !important;
+.glass-card {
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+    border: 1px solid rgba(128, 128, 128, 0.18);
+    border-radius: 10px;
     padding: 16px 18px;
-    box-shadow: {card_shadow} !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}}
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-.glass-card:hover {{
+.glass-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(2, 132, 199, 0.35) !important;
-}}
+    box-shadow: 0 6px 14px -2px rgba(0, 0, 0, 0.08);
+}
 
-.glass-card-top {{
+.glass-card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 6px;
-}}
+}
 
-.glass-card-label {{
+.glass-card-label {
     font-size: 0.74rem;
     font-weight: 700;
     letter-spacing: 0.05em;
-    color: {sub_color};
+    opacity: 0.75;
     text-transform: uppercase;
-}}
+}
 
-.glass-card-indicator {{
+.glass-card-indicator {
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background-color: #0284c7;
     display: inline-block;
-}}
+}
 
-.glass-card-value {{
+.glass-card-value {
     font-family: 'JetBrains Mono', monospace !important;
     font-size: 1.75rem;
     font-weight: 700;
     letter-spacing: -0.03em;
-    color: {text_color};
     margin-bottom: 4px;
     line-height: 1.2;
-}}
+}
 
-.glass-card-sub {{
+.glass-card-sub {
     font-size: 0.76rem;
-    color: {sub_color};
-}}
+    opacity: 0.72;
+}
 
-.badge-positive {{ color: #10b981; font-weight: 600; font-family: 'JetBrains Mono', monospace; }}
-.badge-warning {{ color: #f59e0b; font-weight: 600; font-family: 'JetBrains Mono', monospace; }}
-.badge-danger {{ color: #ef4444; font-weight: 600; font-family: 'JetBrains Mono', monospace; }}
+.badge-positive { color: #10b981; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.badge-warning { color: #f59e0b; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.badge-danger { color: #ef4444; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
 
-.insight-box {{
-    background: {card_bg} !important;
-    border-left: 4px solid #0284c7 !important;
-    border-top: 1px solid {card_border} !important;
-    border-right: 1px solid {card_border} !important;
-    border-bottom: 1px solid {card_border} !important;
+.insight-box {
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+    border-left: 4px solid #0284c7;
+    border-top: 1px solid rgba(128, 128, 128, 0.15);
+    border-right: 1px solid rgba(128, 128, 128, 0.15);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
     border-radius: 0 8px 8px 0;
     padding: 12px 16px;
     margin-bottom: 10px;
-}}
+}
 
-.insight-title {{
+.insight-title {
     font-weight: 700;
     font-size: 0.88rem;
-    color: {text_color};
     margin-bottom: 4px;
-}}
+}
 
-.insight-body {{
+.insight-body {
     font-size: 0.82rem;
-    color: {sub_color};
+    opacity: 0.85;
     line-height: 1.45;
-}}
+}
 
-.stTabs [data-baseweb="tab-list"] {{
+.stTabs [data-baseweb="tab-list"] {
     gap: 6px;
-    background: {tab_list_bg} !important;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid {tab_list_border} !important;
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+    border: 1px solid rgba(128, 128, 128, 0.18);
     padding: 4px 6px;
     border-radius: 10px;
     margin-bottom: 20px;
-}}
+}
 
-.stTabs [data-baseweb="tab"] {{
+.stTabs [data-baseweb="tab"] {
     border-radius: 6px;
     font-weight: 600;
     font-size: 0.88rem;
     padding: 8px 16px;
-    color: {tab_text} !important;
-}}
-
-.stTabs [data-baseweb="tab"][aria-selected="true"] {{
-    background: {tab_selected_bg} !important;
-    color: {tab_selected_text} !important;
-}}
+}
 
 /* Dataframe & Tables */
-.stDataFrame table, div[data-testid="stTable"] {{
+.stDataFrame table, div[data-testid="stTable"] {
     font-family: 'JetBrains Mono', monospace !important;
     font-size: 0.82rem !important;
-}}
+}
 
-.zone-pill {{
+.zone-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -344,7 +287,7 @@ html, body, [class*="css"], .stApp {{
     font-size: 0.76rem;
     font-weight: 600;
     font-family: 'JetBrains Mono', monospace;
-}}
+}
 </style>
 """
     st.markdown(textwrap.dedent(css_code).strip(), unsafe_allow_html=True)
@@ -1224,33 +1167,8 @@ def main() -> None:
         initial_sidebar_state="collapsed",
     )
 
-    if "theme_mode" not in st.session_state:
-        st.session_state["theme_mode"] = "Dark"
-
-    # Top Control Bar with Theme Switcher
-    top_col1, top_col2 = st.columns([5, 1])
-    with top_col2:
-        st.markdown(
-            """
-            <div style="text-align: right; font-size: 0.72rem; font-weight: 700; color: #94a3b8; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 2px;">
-                Dashboard Theme
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        theme_choice = st.segmented_control(
-            "Theme Mode",
-            options=["Light", "Dark"],
-            default=st.session_state["theme_mode"],
-            label_visibility="collapsed",
-            key="theme_mode_selector",
-        )
-        if theme_choice and theme_choice != st.session_state["theme_mode"]:
-            st.session_state["theme_mode"] = theme_choice
-            st.rerun()
-
-    current_theme = st.session_state.get("theme_mode", "Dark")
-    inject_custom_css(current_theme)
+    # Inject adaptive theme styling
+    inject_custom_css()
 
     # Executive Hero Banner (Zero Emojis)
     banner_html = """
