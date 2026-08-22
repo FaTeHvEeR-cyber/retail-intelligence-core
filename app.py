@@ -808,22 +808,86 @@ def render_forecast_explorer() -> None:
     apply_plotly_theme(fig_pred, height=420)
     st.plotly_chart(fig_pred, use_container_width=True)
 
-    # Rolled-Up Aggregation
-    st.markdown(f"#### Aggregated Total Sales: Store {selected_store}")
-    agg_freq = st.radio("Aggregate View:", ["Weekly", "Monthly"], horizontal=True, key="agg_store_freq")
+    # Rolled-Up Multi-Store Aggregation
+    st.markdown("---")
+    st.markdown("### Aggregated Sales Forecast vs. Actual")
+    st.caption("Compare aggregate revenue volume for single stores, custom multi-store cohorts, or the entire retail network.")
+
+    agg_col1, agg_col2 = st.columns([2, 1])
+    with agg_col1:
+        agg_mode = st.radio(
+            "Aggregation Scope:",
+            ["Single Store", "Custom Multi-Store Cohort", "Entire Network (All 1,115 Stores)"],
+            horizontal=True,
+            key="agg_scope_mode",
+        )
+    with agg_col2:
+        agg_freq = st.radio(
+            "Time Interval:",
+            ["Weekly", "Monthly"],
+            horizontal=True,
+            key="agg_store_freq",
+        )
+
     freq_code = "W" if agg_freq == "Weekly" else "ME"
 
-    rolled_df = store_df.set_index("Date")[["Actual", f"Predicted_{selected_model}"]].resample(freq_code).sum().reset_index()
+    if agg_mode == "Single Store":
+        agg_stores = [selected_store]
+        scope_title = f"Store {selected_store}"
+    elif agg_mode == "Custom Multi-Store Cohort":
+        default_cohort = store_list[:5] if len(store_list) >= 5 else store_list
+        agg_stores = st.multiselect(
+            "Select Stores for Cohort Aggregation:",
+            store_list,
+            default=default_cohort,
+            key="cohort_multiselect",
+        )
+        if not agg_stores:
+            st.info("Please select at least one store to view cohort aggregations.")
+            return
+        scope_title = f"Custom Cohort ({len(agg_stores)} Stores)"
+    else:
+        agg_stores = store_list
+        scope_title = f"Entire Network ({len(store_list):,} Stores)"
+
+    filtered_preds = predictions[predictions["Store"].isin(agg_stores)]
+    rolled_df = (
+        filtered_preds.groupby("Date")[["Actual", f"Predicted_{selected_model}"]]
+        .sum()
+        .resample(freq_code)
+        .sum()
+        .reset_index()
+    )
+
+    tot_actual = float(rolled_df["Actual"].sum())
+    tot_pred = float(rolled_df[f"Predicted_{selected_model}"].sum())
+    pct_delta = 100 * (tot_pred - tot_actual) / tot_actual if tot_actual != 0 else 0.0
+
+    pills_html = f"""
+    <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+        <div class="zone-pill" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
+            Actual Total: €{tot_actual:,.0f}
+        </div>
+        <div class="zone-pill" style="background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e;">
+            {selected_model.upper()} Forecast Total: €{tot_pred:,.0f}
+        </div>
+        <div class="zone-pill" style="background: rgba(128, 128, 128, 0.12); border: 1px solid rgba(128, 128, 128, 0.3); color: {'#10b981' if abs(pct_delta) <= 5 else '#f59e0b'};">
+            Variance Delta: {pct_delta:+.2f}%
+        </div>
+    </div>
+    """
+    st.markdown(textwrap.dedent(pills_html).strip(), unsafe_allow_html=True)
+
     fig_rolled = px.bar(
         rolled_df,
         x="Date",
         y=["Actual", f"Predicted_{selected_model}"],
         barmode="group",
-        title=f"Store {selected_store}: Aggregated {agg_freq} Forecast vs Actual",
-        labels={"value": "Total Sales (€)", "variable": "Series"},
+        title=f"{scope_title}: Aggregated {agg_freq} Sales — Actual vs. {selected_model.upper()} Forecast",
+        labels={"value": "Total Sales (€)", "variable": "Series", "Date": "Timeline"},
         color_discrete_map={"Actual": "#10b981", f"Predicted_{selected_model}": "#f43f5e"},
     )
-    apply_plotly_theme(fig_rolled, height=350)
+    apply_plotly_theme(fig_rolled, height=360)
     st.plotly_chart(fig_rolled, use_container_width=True)
 
 
