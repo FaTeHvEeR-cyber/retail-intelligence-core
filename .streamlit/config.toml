@@ -8,6 +8,3 @@ enableXsrfProtection = false
 [browser]
 serverAddress = "localhost"
 gatherUsageStats = false
-
-[theme]
-primaryColor = "#0284c7"

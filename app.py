@@ -46,40 +46,30 @@ if str(SRC_DIR) not in sys.path:
 # ----------------------------------------------------------------------------
 # Adaptive Plotly Theme Styler
 # ----------------------------------------------------------------------------
-def apply_plotly_theme(fig: go.Figure, height: int | None = None, theme_mode: str | None = None) -> go.Figure:
+def apply_plotly_theme(fig: go.Figure, height: int | None = None) -> go.Figure:
     """Applies a clean, responsive transparent layout with professional typography."""
-    if theme_mode is None:
-        theme_mode = st.session_state.get("theme_mode", "Dark") if hasattr(st, "session_state") else "Dark"
-
-    is_dark = (theme_mode == "Dark")
-    text_color = "#f8fafc" if is_dark else "#0f172a"
-    muted_color = "#94a3b8" if is_dark else "#64748b"
-    grid_color = "rgba(255, 255, 255, 0.08)" if is_dark else "rgba(0, 0, 0, 0.08)"
-    legend_bg = "rgba(18, 24, 38, 0.75)" if is_dark else "rgba(255, 255, 255, 0.9)"
-    legend_border = "rgba(255, 255, 255, 0.12)" if is_dark else "rgba(226, 232, 240, 0.9)"
-
     layout_update = dict(
         paper_bgcolor="rgba(0, 0, 0, 0)",
-        plot_bgcolor="rgba(128, 128, 128, 0.03)",
-        font=dict(family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", size=12, color=text_color),
+        plot_bgcolor="rgba(128, 128, 128, 0.04)",
+        font=dict(family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", size=12),
         margin=dict(l=45, r=25, t=45, b=40),
         xaxis=dict(
-            gridcolor=grid_color,
-            zerolinecolor=grid_color,
-            tickfont=dict(family="JetBrains Mono, monospace", size=11, color=muted_color),
-            title_font=dict(size=12, family="Inter, sans-serif", color=text_color),
+            gridcolor="rgba(128, 128, 128, 0.15)",
+            zerolinecolor="rgba(128, 128, 128, 0.15)",
+            tickfont=dict(family="JetBrains Mono, monospace", size=11),
+            title_font=dict(size=12, family="Inter, sans-serif"),
         ),
         yaxis=dict(
-            gridcolor=grid_color,
-            zerolinecolor=grid_color,
-            tickfont=dict(family="JetBrains Mono, monospace", size=11, color=muted_color),
-            title_font=dict(size=12, family="Inter, sans-serif", color=text_color),
+            gridcolor="rgba(128, 128, 128, 0.15)",
+            zerolinecolor="rgba(128, 128, 128, 0.15)",
+            tickfont=dict(family="JetBrains Mono, monospace", size=11),
+            title_font=dict(size=12, family="Inter, sans-serif"),
         ),
         legend=dict(
-            bgcolor=legend_bg,
-            bordercolor=legend_border,
+            bgcolor="rgba(128, 128, 128, 0.08)",
+            bordercolor="rgba(128, 128, 128, 0.18)",
             borderwidth=1,
-            font=dict(family="Inter, sans-serif", size=11, color=text_color),
+            font=dict(family="Inter, sans-serif", size=11),
         ),
         colorway=["#0284c7", "#6366f1", "#10b981", "#f59e0b", "#ef4444"],
     )
@@ -92,139 +82,43 @@ def apply_plotly_theme(fig: go.Figure, height: int | None = None, theme_mode: st
 # ----------------------------------------------------------------------------
 # Theme-Adaptive Custom CSS
 # ----------------------------------------------------------------------------
-def inject_custom_css(theme_mode: str = "Dark") -> None:
+def inject_custom_css() -> None:
     """Injects high-end enterprise typography, JetBrains Mono numbers, and adaptive styling."""
-    is_dark = (theme_mode == "Dark")
-
-    if is_dark:
-        theme_vars = """
-        .stApp {
-            background-color: #0b0f19 !important;
-            color: #f8fafc !important;
-        }
-        .hero-banner, .glass-card, .insight-box {
-            background: rgba(18, 24, 38, 0.75) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
-        }
-        .hero-title { color: #f8fafc !important; }
-        .hero-subtitle, .dataset-pill { color: #94a3b8 !important; }
-        .glass-card-value { color: #f8fafc !important; }
-        .glass-card-label, .glass-card-sub { color: #94a3b8 !important; }
-        [data-testid="stTabs"] button[data-baseweb="tab"],
-        [data-testid="stTabs"] button[role="tab"] {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            color: #94a3b8 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"] p,
-        [data-testid="stTabs"] button[role="tab"] p {
-            color: #94a3b8 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"]:hover,
-        [data-testid="stTabs"] button[role="tab"]:hover {
-            border-color: #0284c7 !important;
-            background: rgba(2, 132, 199, 0.15) !important;
-            color: #0284c7 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"]:hover p,
-        [data-testid="stTabs"] button[role="tab"]:hover p {
-            color: #0284c7 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"],
-        [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-            background: #0284c7 !important;
-            color: #ffffff !important;
-            border: 1px solid #0284c7 !important;
-            box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.35) !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] p,
-        [data-testid="stTabs"] button[role="tab"][aria-selected="true"] p {
-            color: #ffffff !important;
-        }
-        """
-    else:
-        theme_vars = """
-        .stApp {
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
-        }
-        .hero-banner, .glass-card, .insight-box {
-            background: #ffffff !important;
-            border: 1px solid #e2e8f0 !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
-        }
-        .hero-title { color: #0f172a !important; }
-        .hero-subtitle, .dataset-pill { color: #475569 !important; }
-        .glass-card-value { color: #0f172a !important; }
-        .glass-card-label, .glass-card-sub { color: #64748b !important; }
-        [data-testid="stTabs"] button[data-baseweb="tab"],
-        [data-testid="stTabs"] button[role="tab"] {
-            background: #f1f5f9 !important;
-            border: 1px solid #cbd5e1 !important;
-            color: #334155 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"] p,
-        [data-testid="stTabs"] button[role="tab"] p {
-            color: #334155 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"]:hover,
-        [data-testid="stTabs"] button[role="tab"]:hover {
-            border-color: #0284c7 !important;
-            background: #e0f2fe !important;
-            color: #0284c7 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"]:hover p,
-        [data-testid="stTabs"] button[role="tab"]:hover p {
-            color: #0284c7 !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"],
-        [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-            background: #0284c7 !important;
-            color: #ffffff !important;
-            border: 1px solid #0284c7 !important;
-            box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.25) !important;
-        }
-        [data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] p,
-        [data-testid="stTabs"] button[role="tab"][aria-selected="true"] p {
-            color: #ffffff !important;
-        }
-        """
-
-    css_code = f"""
+    css_code = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-html, body, [class*="css"], .stApp {{
+html, body, [class*="css"], .stApp {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-}}
-
-{theme_vars}
+}
 
 /* Monospace Numbers Across All Metrics and Financials */
-.mono-num, code, pre, .glass-card-value, .metric-value, [data-testid="stMetricValue"] {{
+.mono-num, code, pre, .glass-card-value, .metric-value, [data-testid="stMetricValue"] {
     font-family: 'JetBrains Mono', monospace !important;
     font-variant-numeric: tabular-nums !important;
-}}
+}
 
-.hero-banner {{
+.hero-banner {
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+    border: 1px solid rgba(128, 128, 128, 0.2);
     border-radius: 14px;
     padding: 24px 28px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
-}}
+}
 
-.hero-banner::before {{
+.hero-banner::before {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, #0284c7, #6366f1, #8b5cf6, #10b981);
-}}
+}
 
-.hero-badge {{
+.hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -237,195 +131,14 @@ html, body, [class*="css"], .stApp {{
     letter-spacing: 0.08em;
     color: #10b981;
     margin-bottom: 10px;
-}}
+}
 
-.pulse-dot {{
+.pulse-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background-color: #10b981;
-}}
-
-.hero-title {{
-    font-size: 1.85rem !important;
-    font-weight: 800 !important;
-    margin: 0 0 6px 0 !important;
-    letter-spacing: -0.02em;
-}}
-
-.hero-subtitle {{
-    font-size: 0.88rem;
-    margin-bottom: 12px;
-    max-width: 920px;
-    line-height: 1.45;
-}}
-
-.dataset-pill {{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border-radius: 6px;
-    padding: 4px 12px;
-    font-size: 0.78rem;
-}}
-
-.dataset-pill strong {{
-    color: #0284c7;
-}}
-
-.kpi-container {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 14px;
-    margin-bottom: 20px;
-}}
-
-.glass-card {{
-    border-radius: 10px;
-    padding: 16px 18px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}}
-
-.glass-card:hover {{
-    transform: translateY(-2px);
-    border-color: rgba(2, 132, 199, 0.4) !important;
-}}
-
-.glass-card-top {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-}}
-
-.glass-card-label {{
-    font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}}
-
-.glass-card-indicator {{
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: #0284c7;
-    display: inline-block;
-}}
-
-.glass-card-value {{
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin-bottom: 4px;
-    line-height: 1.2;
-}}
-
-.glass-card-sub {{
-    font-size: 0.76rem;
-}}
-
-.badge-positive {{ color: #10b981; font-weight: 600; font-family: 'JetBrains Mono', monospace; }}
-.badge-warning {{ color: #f59e0b; font-weight: 600; font-family: 'JetBrains Mono', monospace; }}
-.badge-danger {{ color: #ef4444; font-weight: 600; font-family: 'JetBrains Mono', monospace; }}
-
-.insight-box {{
-    border-left: 4px solid #0284c7 !important;
-    border-radius: 0 8px 8px 0;
-    padding: 12px 16px;
-    margin-bottom: 10px;
-}}
-
-.insight-title {{
-    font-weight: 700;
-    font-size: 0.88rem;
-    margin-bottom: 4px;
-}}
-
-.insight-body {{
-    font-size: 0.82rem;
-    line-height: 1.45;
-}}
-
-/* Navigation Tabs - Segmented Enterprise Button Pills */
-[data-testid="stTabs"] [data-baseweb="tab-list"],
-div[data-baseweb="tab-list"],
-div[role="tablist"] {{
-    gap: 12px !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 6px 0 !important;
-    margin-bottom: 20px !important;
-    display: flex !important;
-}}
-
-/* Hide BaseWeb underline/highlight bar completely */
-[data-testid="stTabs"] [data-baseweb="tab-border"],
-[data-testid="stTabs"] [data-baseweb="tab-highlight"],
-div[data-baseweb="tab-border"],
-div[data-baseweb="tab-highlight"] {{
-    display: none !important;
-    height: 0 !important;
-    background-color: transparent !important;
-    border: none !important;
-}}
-
-/* Ensure tab contents are always 100% visible */
-[data-testid="stTabs"] [data-testid="stTabContent"],
-[data-testid="stTabs"] [role="tabpanel"] {{
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}}
-
-[data-testid="stTabs"] button[data-baseweb="tab"],
-[data-testid="stTabs"] button[role="tab"] {{
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    padding: 10px 18px !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
-}}
-
-[data-testid="stTabs"] button[data-baseweb="tab"] p,
-[data-testid="stTabs"] button[role="tab"] p {{
-    font-size: 0.88rem !important;
-    font-weight: 600 !important;
-    margin: 0 !important;
-}}
-
-[data-testid="stTabs"] button[data-baseweb="tab"]:hover,
-[data-testid="stTabs"] button[role="tab"]:hover {{
-    transform: translateY(-1px);
-}}
-
-[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] p,
-[data-testid="stTabs"] button[role="tab"][aria-selected="true"] p {{
-    font-weight: 700 !important;
-}}
-
-/* Dataframe & Tables */
-.stDataFrame table, div[data-testid="stTable"] {{
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 0.82rem !important;
-}}
-
-.zone-pill {{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 0.76rem;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-}}
-</style>
-"""
-    st.markdown(textwrap.dedent(css_code).strip(), unsafe_allow_html=True)
+}
 
 .hero-title {
     font-size: 1.85rem !important;
@@ -492,7 +205,6 @@ div[data-baseweb="tab-highlight"] {{
     letter-spacing: 0.05em;
     opacity: 0.75;
     text-transform: uppercase;
-    color: var(--text-color, inherit);
 }
 
 .glass-card-indicator {
@@ -510,13 +222,11 @@ div[data-baseweb="tab-highlight"] {{
     letter-spacing: -0.03em;
     margin-bottom: 4px;
     line-height: 1.2;
-    color: var(--text-color, inherit) !important;
 }
 
 .glass-card-sub {
     font-size: 0.76rem;
     opacity: 0.72;
-    color: var(--text-color, inherit);
 }
 
 .badge-positive { color: #10b981; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
@@ -546,84 +256,20 @@ div[data-baseweb="tab-highlight"] {{
     line-height: 1.45;
 }
 
-/* Navigation Tabs - Segmented Enterprise Button Pills */
-[data-testid="stTabs"] [data-baseweb="tab-list"],
-div[data-baseweb="tab-list"],
-div[role="tablist"] {
-    gap: 12px !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 6px 0 !important;
-    margin-bottom: 20px !important;
-    display: flex !important;
+.stTabs [data-baseweb="tab-list"] {
+    gap: 6px;
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+    border: 1px solid rgba(128, 128, 128, 0.18);
+    padding: 4px 6px;
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
-/* Hide BaseWeb underline/highlight bar completely */
-[data-testid="stTabs"] [data-baseweb="tab-border"],
-[data-testid="stTabs"] [data-baseweb="tab-highlight"],
-div[data-baseweb="tab-border"],
-div[data-baseweb="tab-highlight"] {
-    display: none !important;
-    height: 0 !important;
-    background-color: transparent !important;
-    border: none !important;
-}
-
-/* Ensure tab contents are always 100% visible */
-[data-testid="stTabs"] [data-testid="stTabContent"],
-[data-testid="stTabs"] [role="tabpanel"] {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"],
-[data-testid="stTabs"] button[role="tab"] {
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    padding: 10px 18px !important;
-    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08)) !important;
-    border: 1px solid rgba(128, 128, 128, 0.22) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
-    color: inherit !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"] p,
-[data-testid="stTabs"] button[role="tab"] p {
-    font-size: 0.88rem !important;
-    font-weight: 600 !important;
-    margin: 0 !important;
-    color: inherit !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"]:hover,
-[data-testid="stTabs"] button[role="tab"]:hover {
-    border-color: rgba(2, 132, 199, 0.5) !important;
-    background: rgba(2, 132, 199, 0.12) !important;
-    color: #0284c7 !important;
-    transform: translateY(-1px);
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"]:hover p,
-[data-testid="stTabs"] button[role="tab"]:hover p {
-    color: #0284c7 !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"],
-[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-    background: #0284c7 !important;
-    color: #ffffff !important;
-    border: 1px solid #0284c7 !important;
-    box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.35) !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] p,
-[data-testid="stTabs"] button[role="tab"][aria-selected="true"] p {
-    color: #ffffff !important;
-    font-weight: 700 !important;
+.stTabs [data-baseweb="tab"] {
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 8px 16px;
 }
 
 /* Dataframe & Tables */
@@ -1518,47 +1164,11 @@ def main() -> None:
     st.set_page_config(
         page_title="Retail Intelligence & Demand Forecasting Suite",
         layout="wide",
-        initial_sidebar_state="expanded",
+        initial_sidebar_state="collapsed",
     )
 
-    if "theme_mode" not in st.session_state:
-        st.session_state["theme_mode"] = "Dark"
-
-    # Sidebar: Appearance & Environment Control (Top-Left)
-    with st.sidebar:
-        st.markdown(
-            """
-            <div style="font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;">
-                Appearance & Environment
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        theme_choice = st.selectbox(
-            "Dashboard Theme",
-            options=["Dark", "Light"],
-            index=0 if st.session_state["theme_mode"] == "Dark" else 1,
-            key="theme_mode_selector",
-        )
-        if theme_choice != st.session_state["theme_mode"]:
-            st.session_state["theme_mode"] = theme_choice
-            st.rerun()
-
-        st.markdown("---")
-        st.markdown(
-            """
-            <div style="font-size: 0.74rem; line-height: 1.5;">
-                <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background-color: #10b981; margin-right: 6px;"></span>
-                <strong>Production ML Pipeline Live</strong><br>
-                <span>XGBoost Forecaster • Autoencoder</span><br>
-                <span>1,115 Retail Stores Active</span>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    current_theme = st.session_state.get("theme_mode", "Dark")
-    inject_custom_css(current_theme)
+    # Inject adaptive theme styling
+    inject_custom_css()
 
     # Executive Hero Banner (Zero Emojis)
     banner_html = """
