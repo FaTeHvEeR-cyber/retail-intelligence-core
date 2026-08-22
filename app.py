@@ -7,11 +7,11 @@ Integrates the outputs of Modules 1-5 (data_prep, hypothesis_testing,
 clustering, train_models/evaluate, fraud_detection) into an enterprise
 executive 5-tab dashboard with zero emojis, professional typography,
 and high-performance visualizations:
-    1. Executive Overview       - Top-level KPIs, revenue trend, correlation matrix, hypothesis tests
-    2. Store Performance        - Leaderboards, store revenue volatility, deep-dive profiles
+    1. Executive Overview       - Top-level KPIs, revenue trend, ranked factor correlation, hypothesis tests
+    2. Store Performance        - Leaderboards, risk quadrant scatter (Volume vs Volatility), deep-dive profiles
     3. Demand Forecast          - Actual vs. Predicted time series, model benchmarks (RMSPE/latency), mechanics
     4. Store Segmentation       - 2D PCA cluster map, business segment profiles, silhouette diagnostics
-    5. Fraud & Anomaly Feed     - Real-time alert feed, MSE reconstruction distribution, severity filters, QA metrics
+    5. Fraud & Anomaly Feed     - Risk-tiered reconstruction distribution, real-time alert feed, severity filters
 """
 
 from __future__ import annotations
@@ -271,6 +271,17 @@ html, body, [class*="css"], .stApp {
     font-family: 'JetBrains Mono', monospace !important;
     font-size: 0.82rem !important;
 }
+
+.zone-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+}
 </style>
 """
     st.markdown(textwrap.dedent(css_code).strip(), unsafe_allow_html=True)
@@ -493,32 +504,59 @@ def render_executive_overview() -> None:
         title=f"Total Chain Sales Velocity ({granularity})",
     )
     fig_trend.update_traces(line=dict(width=2.5, color="#0284c7", shape="spline"), fillcolor="rgba(2, 132, 199, 0.12)")
-    apply_plotly_theme(fig_trend, height=380)
+    apply_plotly_theme(fig_trend, height=360)
     st.plotly_chart(fig_trend, use_container_width=True)
 
     st.markdown("---")
-    st.markdown("### Multi-Factor Demand Correlation Matrix")
+    st.markdown("### Key Drivers of Retail Demand (Correlation with Revenue)")
+    st.caption("Ranked Pearson correlation coefficients measuring direct linear association with store daily sales volume.")
+
     corr_cols = {
-        "Sales": "Sales (€)",
-        "Customers": "Customers",
-        "Promo": "Promo Active",
-        "IsWeekend": "Weekend",
-        "SchoolHoliday": "School Holiday",
-        "CompetitionDistance": "Competition Dist",
+        "Customers": "Store Footfall (Customers)",
+        "Promo": "Promotional Campaign Active",
+        "SchoolHoliday": "School Holiday Period",
+        "IsWeekend": "Weekend Trading",
+        "CompetitionDistance": "Competition Distance (m)",
     }
     available_cols = [c for c in corr_cols if c in train_df.columns]
-    corr_matrix = train_df[available_cols].corr().rename(columns=corr_cols, index=corr_cols)
 
-    fig_corr = px.imshow(
-        corr_matrix,
-        text_auto=".2f",
-        color_continuous_scale="Blues",
-        zmin=-1,
-        zmax=1,
-        labels=dict(color="Pearson Corr"),
+    corr_series = train_df[available_cols].apply(lambda s: s.corr(train_df["Sales"]))
+    corr_df = pd.DataFrame({
+        "Feature": [corr_cols[c] for c in available_cols],
+        "Correlation": [corr_series[c] for c in available_cols],
+    }).sort_values("Correlation", ascending=True)
+
+    # Color code positive vs negative drivers
+    corr_df["Color"] = np.where(corr_df["Correlation"] >= 0, "#0284c7", "#ef4444")
+    corr_df["Formatted_Corr"] = corr_df["Correlation"].apply(lambda x: f"{x:+.3f}")
+
+    fig_corr_bar = go.Figure()
+    fig_corr_bar.add_trace(go.Bar(
+        x=corr_df["Correlation"],
+        y=corr_df["Feature"],
+        orientation="h",
+        marker=dict(color=corr_df["Color"], line=dict(width=0)),
+        text=corr_df["Formatted_Corr"],
+        textposition="outside",
+        textfont=dict(family="JetBrains Mono, monospace", size=11),
+        hovertemplate="<b>%{y}</b><br>Correlation with Sales: %{x:.4f}<extra></extra>",
+    ))
+    fig_corr_bar.update_layout(
+        title="Ranked Impact of External & Operational Drivers on Sales",
+        xaxis=dict(
+            title="Pearson Correlation (r)",
+            range=[
+                min(corr_df["Correlation"].min() - 0.12, -0.2),
+                max(corr_df["Correlation"].max() + 0.15, 0.95),
+            ],
+            zeroline=True,
+            zerolinecolor="rgba(128, 128, 128, 0.4)",
+            zerolinewidth=1.5,
+        ),
+        yaxis=dict(title=""),
     )
-    apply_plotly_theme(fig_corr, height=420)
-    st.plotly_chart(fig_corr, use_container_width=True)
+    apply_plotly_theme(fig_corr_bar, height=340)
+    st.plotly_chart(fig_corr_bar, use_container_width=True)
 
     if hypo and "tests" in hypo:
         st.markdown("---")
@@ -603,20 +641,52 @@ def render_store_performance() -> None:
         )
 
     st.markdown("---")
-    st.markdown("### Revenue Volatility Ranking (Coefficient of Variation)")
-    volatile_df = df.nlargest(15, "sales_cv").sort_values("sales_cv", ascending=True)
-    fig_vol = px.bar(
-        volatile_df,
-        x="sales_cv",
-        y=volatile_df["Store"].astype(str),
-        orientation="h",
-        labels={"sales_cv": "Volatility (CV)", "y": "Store ID"},
-        title="Top 15 Most Volatile Stores in Network",
-        color="sales_cv",
-        color_continuous_scale="Purples",
+    st.markdown("### Store Revenue vs. Volatility Risk Quadrant")
+    st.caption("Mapping sales volume against volatility (Coefficient of Variation) to isolate inventory risk and steady performers.")
+
+    med_sales = float(df["avg_daily_sales"].median())
+    med_cv = float(df["sales_cv"].median())
+
+    type_col = "StoreType" if "StoreType" in df.columns else None
+
+    fig_quad = px.scatter(
+        df,
+        x="avg_daily_sales",
+        y="sales_cv",
+        color=type_col,
+        hover_data=["Store", "avg_daily_customers", "promo_lift_pct"],
+        labels={
+            "avg_daily_sales": "Average Daily Sales (€)",
+            "sales_cv": "Sales Volatility (Coefficient of Variation)",
+            "StoreType": "Store Type",
+        },
+        title="Network Store Risk Map: Daily Revenue vs. Volatility",
+        color_discrete_sequence=["#0284c7", "#10b981", "#f59e0b", "#8b5cf6"],
     )
-    apply_plotly_theme(fig_vol, height=450)
-    st.plotly_chart(fig_vol, use_container_width=True)
+    fig_quad.update_traces(marker=dict(size=7, opacity=0.75, line=dict(width=0.5, color="white")))
+
+    # Add Median Benchmark Lines
+    fig_quad.add_vline(x=med_sales, line_dash="dot", line_color="rgba(128, 128, 128, 0.45)")
+    fig_quad.add_hline(y=med_cv, line_dash="dot", line_color="rgba(128, 128, 128, 0.45)")
+
+    # Quadrant annotations
+    x_max = df["avg_daily_sales"].max()
+    y_max = df["sales_cv"].max()
+    fig_quad.add_annotation(
+        x=x_max * 0.85, y=y_max * 0.95,
+        text="High Volume / High Volatility<br><b>(High Inventory Risk)</b>",
+        showarrow=False, font=dict(size=10, color="#f59e0b", family="Inter, sans-serif"),
+        bgcolor="rgba(128, 128, 128, 0.1)", bordercolor="rgba(128, 128, 128, 0.2)", borderpad=4,
+    )
+    fig_quad.add_annotation(
+        x=x_max * 0.85, y=df["sales_cv"].min() * 1.1,
+        text="High Volume / Stable<br><b>(Core Revenue Engines)</b>",
+        showarrow=False, font=dict(size=10, color="#10b981", family="Inter, sans-serif"),
+        bgcolor="rgba(128, 128, 128, 0.1)", bordercolor="rgba(128, 128, 128, 0.2)", borderpad=4,
+    )
+
+    apply_plotly_theme(fig_quad, height=480)
+    st.plotly_chart(fig_quad, use_container_width=True)
 
 
 # ----------------------------------------------------------------------------
@@ -895,23 +965,80 @@ def render_fraud_feed() -> None:
     """
     st.markdown(textwrap.dedent(kpi_html).strip(), unsafe_allow_html=True)
 
-    st.markdown("### Reconstruction Error (Anomaly Score) Distribution")
-    fig_hist = px.histogram(
-        df_alerts,
-        x="reconstruction_error",
-        nbins=60,
-        labels={"reconstruction_error": "Reconstruction MSE (Anomaly Score)"},
-        title="Anomaly Score Frequency Distribution",
-        color_discrete_sequence=["#8b5cf6"],
+    st.markdown("### Reconstruction Error (Anomaly Score) Risk-Tier Distribution")
+    st.caption("Distribution of reconstruction error split into Normal (< p95), Elevated (p95–p99), and Critical (> p99) anomaly tiers.")
+
+    p95_val = float(metrics.get("threshold_p95", 0.0)) if metrics else float(df_alerts["reconstruction_error"].quantile(0.95))
+    p99_val = float(metrics.get("threshold_p99", 0.0)) if metrics else float(df_alerts["reconstruction_error"].quantile(0.99))
+
+    normal_count = int((df_alerts["reconstruction_error"] < p95_val).sum())
+    elevated_count = int(((df_alerts["reconstruction_error"] >= p95_val) & (df_alerts["reconstruction_error"] < p99_val)).sum())
+    critical_count = int((df_alerts["reconstruction_error"] >= p99_val).sum())
+
+    # Risk Tier Callout Badges
+    pills_html = f"""
+    <div style="display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
+        <div class="zone-pill" style="background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.3); color: #0284c7;">
+            Normal Tier: {normal_count:,} ({normal_count / total_reviewed * 100:.1f}%)
+        </div>
+        <div class="zone-pill" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b;">
+            Elevated Risk (p95): {elevated_count:,} ({elevated_count / total_reviewed * 100:.1f}%)
+        </div>
+        <div class="zone-pill" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444;">
+            Critical Anomaly (p99): {critical_count:,} ({critical_count / total_reviewed * 100:.1f}%)
+        </div>
+    </div>
+    """
+    st.markdown(textwrap.dedent(pills_html).strip(), unsafe_allow_html=True)
+
+    # 3-Zone Stacked/Color Histogram
+    df_normal = df_alerts[df_alerts["reconstruction_error"] < p95_val]
+    df_elevated = df_alerts[(df_alerts["reconstruction_error"] >= p95_val) & (df_alerts["reconstruction_error"] < p99_val)]
+    df_critical = df_alerts[df_alerts["reconstruction_error"] >= p99_val]
+
+    fig_hist = go.Figure()
+    fig_hist.add_trace(go.Histogram(
+        x=df_normal["reconstruction_error"],
+        nbinsx=45,
+        name="Normal (< p95)",
+        marker=dict(color="#0284c7"),
+        opacity=0.85,
+    ))
+    fig_hist.add_trace(go.Histogram(
+        x=df_elevated["reconstruction_error"],
+        nbinsx=15,
+        name="Elevated (p95 - p99)",
+        marker=dict(color="#f59e0b"),
+        opacity=0.9,
+    ))
+    fig_hist.add_trace(go.Histogram(
+        x=df_critical["reconstruction_error"],
+        nbinsx=10,
+        name="Critical Anomaly (> p99)",
+        marker=dict(color="#ef4444"),
+        opacity=0.95,
+    ))
+
+    fig_hist.update_layout(
+        barmode="overlay",
+        title="Reconstruction Error Distribution by Risk Tier",
+        xaxis_title="Reconstruction MSE (Anomaly Score)",
+        yaxis_title="Transaction Frequency",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
     )
-    if metrics:
-        p95_val = metrics.get("threshold_p95")
-        p99_val = metrics.get("threshold_p99")
-        if p95_val is not None:
-            fig_hist.add_vline(x=p95_val, line_dash="dash", line_color="#f59e0b", annotation_text=f"p95 ({p95_val:.5f})")
-        if p99_val is not None:
-            fig_hist.add_vline(x=p99_val, line_dash="dash", line_color="#ef4444", annotation_text=f"p99 ({p99_val:.5f})")
-    apply_plotly_theme(fig_hist, height=360)
+
+    fig_hist.add_vline(
+        x=p95_val, line_dash="dash", line_color="#f59e0b",
+        annotation_text=f"p95 Cutoff ({p95_val:.5f})",
+        annotation_font=dict(size=10, color="#f59e0b", family="JetBrains Mono, monospace"),
+    )
+    fig_hist.add_vline(
+        x=p99_val, line_dash="dash", line_color="#ef4444",
+        annotation_text=f"p99 Cutoff ({p99_val:.5f})",
+        annotation_font=dict(size=10, color="#ef4444", family="JetBrains Mono, monospace"),
+    )
+
+    apply_plotly_theme(fig_hist, height=380)
     st.plotly_chart(fig_hist, use_container_width=True)
 
     st.markdown("---")
