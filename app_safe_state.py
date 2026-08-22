@@ -205,6 +205,7 @@ html, body, [class*="css"], .stApp {
     letter-spacing: 0.05em;
     opacity: 0.75;
     text-transform: uppercase;
+    color: var(--text-color, inherit);
 }
 
 .glass-card-indicator {
@@ -222,11 +223,13 @@ html, body, [class*="css"], .stApp {
     letter-spacing: -0.03em;
     margin-bottom: 4px;
     line-height: 1.2;
+    color: var(--text-color, inherit) !important;
 }
 
 .glass-card-sub {
     font-size: 0.76rem;
     opacity: 0.72;
+    color: var(--text-color, inherit);
 }
 
 .badge-positive { color: #10b981; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
