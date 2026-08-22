@@ -205,7 +205,6 @@ html, body, [class*="css"], .stApp {
     letter-spacing: 0.05em;
     opacity: 0.75;
     text-transform: uppercase;
-    color: var(--text-color, inherit);
 }
 
 .glass-card-indicator {
@@ -223,13 +222,11 @@ html, body, [class*="css"], .stApp {
     letter-spacing: -0.03em;
     margin-bottom: 4px;
     line-height: 1.2;
-    color: var(--text-color, inherit) !important;
 }
 
 .glass-card-sub {
     font-size: 0.76rem;
     opacity: 0.72;
-    color: var(--text-color, inherit);
 }
 
 .badge-positive { color: #10b981; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
@@ -259,84 +256,20 @@ html, body, [class*="css"], .stApp {
     line-height: 1.45;
 }
 
-/* Navigation Tabs - Segmented Enterprise Button Pills */
-[data-testid="stTabs"] [data-baseweb="tab-list"],
-div[data-baseweb="tab-list"],
-div[role="tablist"] {
-    gap: 12px !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 6px 0 !important;
-    margin-bottom: 20px !important;
-    display: flex !important;
+.stTabs [data-baseweb="tab-list"] {
+    gap: 6px;
+    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
+    border: 1px solid rgba(128, 128, 128, 0.18);
+    padding: 4px 6px;
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
-/* Hide BaseWeb underline/highlight bar completely */
-[data-testid="stTabs"] [data-baseweb="tab-border"],
-[data-testid="stTabs"] [data-baseweb="tab-highlight"],
-div[data-baseweb="tab-border"],
-div[data-baseweb="tab-highlight"] {
-    display: none !important;
-    height: 0 !important;
-    background-color: transparent !important;
-    border: none !important;
-}
-
-/* Ensure tab contents are always 100% visible */
-[data-testid="stTabs"] [data-testid="stTabContent"],
-[data-testid="stTabs"] [role="tabpanel"] {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"],
-[data-testid="stTabs"] button[role="tab"] {
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    padding: 10px 18px !important;
-    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08)) !important;
-    border: 1px solid rgba(128, 128, 128, 0.22) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
-    color: inherit !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"] p,
-[data-testid="stTabs"] button[role="tab"] p {
-    font-size: 0.88rem !important;
-    font-weight: 600 !important;
-    margin: 0 !important;
-    color: inherit !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"]:hover,
-[data-testid="stTabs"] button[role="tab"]:hover {
-    border-color: rgba(2, 132, 199, 0.5) !important;
-    background: rgba(2, 132, 199, 0.12) !important;
-    color: #0284c7 !important;
-    transform: translateY(-1px);
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"]:hover p,
-[data-testid="stTabs"] button[role="tab"]:hover p {
-    color: #0284c7 !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"],
-[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-    background: #0284c7 !important;
-    color: #ffffff !important;
-    border: 1px solid #0284c7 !important;
-    box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.35) !important;
-}
-
-[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] p,
-[data-testid="stTabs"] button[role="tab"][aria-selected="true"] p {
-    color: #ffffff !important;
-    font-weight: 700 !important;
+.stTabs [data-baseweb="tab"] {
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 8px 16px;
 }
 
 /* Dataframe & Tables */
