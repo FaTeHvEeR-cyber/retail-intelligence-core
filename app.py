@@ -269,15 +269,35 @@ div[role="tablist"] {
     display: flex !important;
 }
 
+/* Completely eliminate red underline and highlight strips */
 [data-testid="stTabs"] [data-baseweb="tab-border"],
 [data-testid="stTabs"] [data-baseweb="tab-highlight"],
 div[data-baseweb="tab-border"],
 div[data-baseweb="tab-highlight"],
-[data-testid="stTabs"] hr {
+[data-testid="stTabs"] [role="tablist"] ~ div,
+[data-testid="stTabs"] [role="tablist"] + div,
+[data-testid="stTabs"] [role="tablist"] > div[aria-hidden="true"],
+[data-testid="stTabs"] [role="tablist"] div[aria-hidden="true"],
+[data-testid="stTabs"] hr,
+div[data-testid="stTabs"] > div > div > div:last-child {
     display: none !important;
     height: 0 !important;
+    max-height: 0 !important;
     opacity: 0 !important;
     visibility: hidden !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+[data-testid="stTabs"] button[role="tab"]::after,
+[data-testid="stTabs"] button[role="tab"]::before,
+[data-testid="stTabs"] button[data-baseweb="tab"]::after,
+[data-testid="stTabs"] button[data-baseweb="tab"]::before,
+button[role="tab"]::after,
+button[role="tab"]::before {
+    display: none !important;
+    content: none !important;
+    border: none !important;
 }
 
 [data-testid="stTabs"] button[data-baseweb="tab"],
