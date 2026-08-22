@@ -83,7 +83,7 @@ def apply_plotly_theme(fig: go.Figure, height: int | None = None) -> go.Figure:
 # Theme-Adaptive Custom CSS
 # ----------------------------------------------------------------------------
 def inject_custom_css() -> None:
-    """Injects high-end enterprise typography, JetBrains Mono numbers, and adaptive styling."""
+    """Injects high-end enterprise typography, JetBrains Mono numbers, and deep slate ambient styling."""
     css_code = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -94,6 +94,17 @@ html, body, [class*="css"], .stApp {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
+/* Deep Navy-Slate Canvas with Subtle Ambient Radial Glows */
+.stApp {
+    background-color: #0b0f19 !important;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.07) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%) !important;
+    background-attachment: fixed !important;
+    color: #e2e8f0 !important;
+}
+
 /* Monospace Numbers Across All Metrics and Financials */
 .mono-num, code, pre, .glass-card-value, .metric-value, [data-testid="stMetricValue"] {
     font-family: 'JetBrains Mono', monospace !important;
@@ -101,12 +112,14 @@ html, body, [class*="css"], .stApp {
 }
 
 .hero-banner {
-    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
-    border: 1px solid rgba(128, 128, 128, 0.2);
+    background: rgba(18, 24, 38, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
     border-radius: 14px;
     padding: 24px 28px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.4);
     position: relative;
     overflow: hidden;
 }
@@ -145,12 +158,12 @@ html, body, [class*="css"], .stApp {
     font-weight: 800 !important;
     margin: 0 0 6px 0 !important;
     letter-spacing: -0.02em;
-    color: var(--text-color, inherit);
+    color: #f8fafc !important;
 }
 
 .hero-subtitle {
     font-size: 0.88rem;
-    opacity: 0.85;
+    color: #94a3b8;
     margin-bottom: 12px;
     max-width: 920px;
     line-height: 1.45;
@@ -160,15 +173,16 @@ html, body, [class*="css"], .stApp {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(128, 128, 128, 0.1);
-    border: 1px solid rgba(128, 128, 128, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 6px;
     padding: 4px 12px;
     font-size: 0.78rem;
+    color: #cbd5e1;
 }
 
 .dataset-pill strong {
-    color: #0284c7;
+    color: #38bdf8;
 }
 
 .kpi-container {
@@ -179,11 +193,20 @@ html, body, [class*="css"], .stApp {
 }
 
 .glass-card {
-    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
-    border: 1px solid rgba(128, 128, 128, 0.18);
-    border-radius: 10px;
+    background: rgba(18, 24, 38, 0.65) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
     padding: 16px 18px;
-    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(2, 132, 199, 0.3) !important;
+    box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.45) !important;
 }
 
 .glass-card-top {
@@ -197,7 +220,7 @@ html, body, [class*="css"], .stApp {
     font-size: 0.74rem;
     font-weight: 700;
     letter-spacing: 0.05em;
-    opacity: 0.75;
+    color: #94a3b8;
     text-transform: uppercase;
 }
 
@@ -214,13 +237,14 @@ html, body, [class*="css"], .stApp {
     font-size: 1.75rem;
     font-weight: 700;
     letter-spacing: -0.03em;
+    color: #f8fafc;
     margin-bottom: 4px;
     line-height: 1.2;
 }
 
 .glass-card-sub {
     font-size: 0.76rem;
-    opacity: 0.72;
+    color: #94a3b8;
 }
 
 .badge-positive { color: #10b981; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
@@ -228,11 +252,11 @@ html, body, [class*="css"], .stApp {
 .badge-danger { color: #ef4444; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
 
 .insight-box {
-    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
-    border-left: 4px solid #0284c7;
-    border-top: 1px solid rgba(128, 128, 128, 0.15);
-    border-right: 1px solid rgba(128, 128, 128, 0.15);
-    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+    background: rgba(18, 24, 38, 0.6) !important;
+    border-left: 4px solid #0284c7 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
     border-radius: 0 8px 8px 0;
     padding: 12px 16px;
     margin-bottom: 10px;
@@ -241,19 +265,21 @@ html, body, [class*="css"], .stApp {
 .insight-title {
     font-weight: 700;
     font-size: 0.88rem;
+    color: #f8fafc;
     margin-bottom: 4px;
 }
 
 .insight-body {
     font-size: 0.82rem;
-    opacity: 0.85;
+    color: #94a3b8;
     line-height: 1.45;
 }
 
 .stTabs [data-baseweb="tab-list"] {
     gap: 6px;
-    background: var(--secondary-background-color, rgba(128, 128, 128, 0.08));
-    border: 1px solid rgba(128, 128, 128, 0.18);
+    background: rgba(18, 24, 38, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     padding: 4px 6px;
     border-radius: 10px;
     margin-bottom: 20px;
@@ -264,6 +290,12 @@ html, body, [class*="css"], .stApp {
     font-weight: 600;
     font-size: 0.88rem;
     padding: 8px 16px;
+    color: #94a3b8 !important;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background: rgba(2, 132, 199, 0.18) !important;
+    color: #38bdf8 !important;
 }
 
 /* Dataframe & Tables */
