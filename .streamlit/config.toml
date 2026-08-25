@@ -1,10 +1,5 @@
 [server]
-headless = false
-address = "localhost"
-port = 8501
-enableCORS = false
-enableXsrfProtection = false
+headless = true
 
 [browser]
-serverAddress = "localhost"
 gatherUsageStats = false
