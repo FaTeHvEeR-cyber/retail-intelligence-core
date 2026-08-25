@@ -6,7 +6,7 @@
 
 An end-to-end, production-ready retail analytics and forecasting engine combining **multi-model time-series demand forecasting**, **statistical hypothesis testing**, **unsupervised store segmentation (K-Means + PCA)**, and **deep learning anomaly detection (PyTorch Autoencoder)** for Point-of-Sale (POS) return fraud — served via a Power BI-style interactive Streamlit dashboard.
 
-**🚀 Live Demo:** [View the Streamlit Application Here](https://retail-intelligence-core-866d8wyzj752yio6rrt7g5.streamlit.app/)
+**Live Demo:** [View the Streamlit Application Here](https://retail-intelligence-core-866d8wyzj752yio6rrt7g5.streamlit.app/)
 
 ---
 
