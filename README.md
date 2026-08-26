@@ -4,7 +4,7 @@
 [![Tests](https://img.shields.io/badge/pytest-29%20passed-brightgreen.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-An end-to-end, production-ready retail analytics and forecasting engine combining **multi-model time-series demand forecasting**, **statistical hypothesis testing**, **unsupervised store segmentation (K-Means + PCA)**, and **deep learning anomaly detection (PyTorch Autoencoder)** for Point-of-Sale (POS) return fraud — served via a Power BI-style interactive Streamlit dashboard.
+An end-to-end, production-grade retail intelligence and forecasting core combining **multi-model time-series demand forecasting**, **statistical hypothesis testing**, **unsupervised store segmentation (K-Means + PCA)**, and **neural anomaly detection (Bottleneck Autoencoder)** for Point-of-Sale (POS) return fraud — served via a Power BI-style interactive Streamlit dashboard.
 
 **Live Demo:** [View the Streamlit Application Here](https://retail-intelligence-core-866d8wyzj752yio6rrt7g5.streamlit.app/)
 
@@ -12,38 +12,75 @@ An end-to-end, production-ready retail analytics and forecasting engine combinin
 
 ## 1. System Capabilities & Architecture
 
-| Capability | Methods / Models | Key Outputs |
-|---|---|---|
-| **Demand Forecasting** | Ridge Regression, XGBoost Regressor, MLP Regressor | Store-level sales forecasts, RMSPE, MAE, RMSE, $R^2$, latency benchmarks |
-| **Hypothesis Testing** | Welch's t-test, One-Way ANOVA | Promo lift statistical significance ($p < 10^{-15}$), store type / assortment variance |
-| **Store Segmentation** | StandardScaler → K-Means ($K=4$) → PCA 2D Projection | Behavioral store cluster assignments & PCA coordinates |
-| **POS Fraud Detection** | Synthetic Return Log Engine + PyTorch Autoencoder | Reconstruction MSE anomaly scoring (95th/99th percentile thresholding) |
-| **Executive Interface** | Streamlit + Plotly | 4-tab interactive executive BI dashboard with real-time what-if scenario testing |
+| Capability | Methods / Models | Training Cycles / Epochs | Key Outputs |
+|---|---|---|---|
+| **Demand Forecasting** | Ridge Regression, XGBoost Regressor, MLP Regressor | • Ridge: Closed-form analytical<br>• XGBoost: 150 boosting rounds<br>• MLP: 30 epochs (batch size 256) | Store-level sales forecasts, RMSPE, MAE, RMSE, $R^2$, latency benchmarks |
+| **Hypothesis Testing** | Welch's t-test, One-Way ANOVA | N/A (Frequentist Statistical Tests) | Promo lift statistical significance ($p < 10^{-15}$), store type / assortment variance |
+| **Store Segmentation** | StandardScaler → K-Means ($K=4$) → PCA 2D Projection | K-Means convergence ($k=4$, silhouette score $0.3230$) | Behavioral store cluster assignments & PCA coordinates |
+| **POS Fraud Detection** | Synthetic POS Stream Engine + Symmetric Bottleneck Autoencoder | 49 epochs (early-stopped from max 400 epochs) | Reconstruction MSE anomaly scoring (95th/99th percentile thresholding) |
+| **Executive Interface** | Streamlit + Plotly BI Theme | Real-time interactive inference | 4-tab interactive executive BI dashboard with real-time what-if scenario testing |
 
 ---
 
 ## 2. Directory Architecture
 
 ```text
-retail_forecasting_project/
+retail-intelligence-core/
+├── .streamlit/
+│   └── config.toml                           <- Streamlit theme and server configuration
+├── configs/
+│   └── rossmann_mapping.yaml                 <- Dataset-agnostic column mapping config
 ├── data/
-│   ├── raw/                  <- Rossmann train.csv, store.csv, test.csv
-│   └── processed/            <- Processed parquet datasets with lag & rolling features
+│   ├── raw/                                  <- Rossmann store and sales raw CSVs
+│   └── processed/                            <- Parquet datasets with engineered lag & rolling features
+├── docs/
+│   ├── Retail Demand Forecasting & Fraud Simulation - Technical Specification.md
+│   └── Retail Demand Forecasting & Fraud Simulation - Study Guide.md
+├── models/
+│   ├── latest_manifest.json                  <- Model registry, metrics, and feature names manifest
+│   ├── ridge_v20260818_191414.joblib         <- Serialized Ridge Regression pipeline
+│   ├── xgboost_v20260818_191414.joblib       <- Serialized XGBoost Regressor pipeline
+│   ├── mlp_v20260818_191414.joblib           <- Serialized MLP Regressor pipeline
+│   ├── fraud_autoencoder_latest.joblib       <- Serialized POS Anomaly Autoencoder model
+│   └── fraud_scaler_latest.joblib            <- Serialized POS Anomaly feature scaler
+├── reports/
+│   ├── comparison_metrics.json               <- Benchmark evaluation metrics across all models
+│   ├── fraud_alerts.json                     <- Flagged high-risk POS anomaly alerts feed
+│   ├── fraud_detection_metrics.json          <- POS detector threshold & diagnostic evaluation metrics
+│   ├── hypothesis_tests.json                 <- Welch's t-test & ANOVA statistical test outputs
+│   ├── store_clusters.csv                    <- Store cluster assignments table
+│   └── store_clusters.json                   <- Store cluster profiles & centroid metrics
 ├── src/
-│   ├── __init__.py           <- Package initialization
-│   ├── data_prep.py          <- Feature engineering, imputation & time-aware split
-│   ├── hypothesis_testing.py <- Welch's t-test, One-Way ANOVA engine
-│   ├── clustering.py         <- Behavioral profiling, K-Means clustering, PCA projection
-│   ├── train_models.py       <- Multi-model forecasting engine (Ridge, XGBoost, MLP)
-│   ├── evaluate.py           <- Benchmark evaluation suite (RMSPE, MAE, RMSE, R²)
-│   └── fraud_detection.py    <- Synthetic POS return generator & PyTorch Autoencoder
-├── models/                   <- Serialized pipelines (.joblib) & latest_manifest.json
-├── reports/                  <- comparison_metrics.json, store_clusters.csv, hypothesis_tests.json
-├── tests/                    <- Complete unit test suite (16 test cases)
-├── configs/                  <- Dataset-agnostic column mapping configs (YAML)
-├── app.py                    <- Power BI-style Streamlit Dashboard
-├── requirements.txt          <- Environment dependencies
-└── README.md                 <- Project execution guide & technical reference
+│   ├── __init__.py                           <- Core package initialization
+│   ├── data_prep.py                          <- Feature engineering, imputation & time-aware split
+│   ├── hypothesis_testing.py                 <- Welch's t-test, One-Way ANOVA engine
+│   ├── clustering.py                         <- Store profiling, K-Means clustering, PCA projection
+│   ├── train_models.py                       <- Multi-model forecasting engine (Ridge, XGBoost, MLP)
+│   ├── evaluate.py                           <- Benchmark evaluation suite (RMSPE, MAE, RMSE, R²)
+│   └── fraud_detection.py                    <- POS return simulator & Bottleneck Autoencoder detector
+├── tests/
+│   ├── test_app.py                           <- Streamlit UI & prediction pipeline tests
+│   ├── test_clustering.py                    <- K-Means & PCA segmentation unit tests
+│   ├── test_data_prep.py                     <- Preprocessing & feature engineering unit tests
+│   ├── test_evaluate.py                      <- Evaluation metric calculation & benchmark tests
+│   ├── test_fraud_detection.py               <- POS anomaly simulation & autoencoder tests
+│   ├── test_hypothesis_testing.py            <- Statistical hypothesis testing unit tests
+│   └── test_train_models.py                  <- Model training & cross-validation unit tests
+├── app.py                                    <- Power BI-style Executive Streamlit Dashboard
+├── app_safe_state.py                         <- Session state safe initialization helper
+├── clustering.py                             <- Root CLI shortcut to src.clustering
+├── data_prep.py                              <- Root CLI shortcut to src.data_prep
+├── evaluate.py                               <- Root CLI shortcut to src.evaluate
+├── fraud_detection.py                        <- Root CLI shortcut to src.fraud_detection
+├── hypothesis_testing.py                     <- Root CLI shortcut to src.hypothesis_testing
+├── train_models.py                           <- Root CLI shortcut to src.train_models
+├── run_dashboard.bat                         <- Windows quick-launch script
+├── pyproject.toml                            <- Project configuration & packaging metadata
+├── pytest.ini                                <- Pytest runner configuration
+├── requirements.txt                          <- Python environment dependencies
+├── runtime.txt                               <- Cloud deployment Python runtime specification
+├── LICENSE                                   <- MIT License
+└── README.md                                 <- Project execution guide & technical reference
 ```
 
 ---
@@ -52,7 +89,7 @@ retail_forecasting_project/
 
 1. **Zero Data Leakage**:
    - Strictly time-aware chronological validation split (final 6 weeks held out: `2015-06-19` to `2015-07-31`).
-   - Cross-validation uses rolling temporal folds via `TimeSeriesSplit` — no random `KFold` or shuffle.
+   - Cross-validation uses rolling temporal folds via `TimeSeriesSplit` (3 folds) — no random `KFold` or shuffle.
    - Lag and rolling statistics reference only past timestamps ($t-7, t-14, t-21, t-30$).
    - Categorical encoders and scalers are fit strictly on training splits.
 2. **Missing Value Imputation Policy**:
@@ -70,7 +107,18 @@ retail_forecasting_project/
 
 ---
 
-## 4. Benchmark Evaluation Results
+## 4. Model Training Dynamics & Benchmark Evaluation
+
+### Model Training & Epoch Cycles Breakdown
+
+| Model | Architecture / Method | Epochs / Training Iterations | Training Set Size | Training Time | Early Stopping / Convergence |
+|---|---|:---:|:---:|:---:|---|
+| **XGBoost Regressor** | Gradient-Boosted Decision Trees | **150 boosting rounds (trees)** | 804,056 rows | 7.86s | `learning_rate=0.08`, `max_depth=8`, `subsample=0.8` |
+| **MLP Regressor** | Deep Neural Network (64 $\rightarrow$ 32) | **30 epochs** | 804,056 rows | 111.76s | Reached `max_iter=30`, `batch_size=256`, `activation=relu` |
+| **Ridge Regression** | Regularized Linear Model ($\alpha=100.0$) | **Closed-form analytical solution** | 804,056 rows | 3.70s | Exact regularized least-squares matrix inversion |
+| **POS Fraud Autoencoder** | Symmetric Bottleneck ANN ($5 \rightarrow 16 \rightarrow 8 \rightarrow 16 \rightarrow 5$) | **49 epochs** | 14,000 transactions | ~1.2s | Early stopped from `max_iter=400` (`n_iter_no_change=15`, $MSE \approx 0.00016$) |
+
+### Benchmark Evaluation Results (`reports/comparison_metrics.json`)
 
 Evaluated on **40,282** held-out validation samples across all 1,115 stores:
 
@@ -107,6 +155,7 @@ Evaluated on **40,282** held-out validation samples across all 1,115 stores:
 ### 1. Environment Setup
 ```bash
 # Clone and enter workspace
+git clone https://github.com/FaTeHvEeR-cyber/retail-intelligence-core.git
 cd retail-intelligence-core
 
 # Create and activate virtual environment
@@ -135,7 +184,10 @@ python -m src.train_models --data data/processed --models-dir models/
 # Step 5: Model Evaluation & Benchmarking
 python -m src.evaluate --data data/processed --models-dir models/ --out reports/comparison_metrics.json
 
-# Step 6: Launch Interactive Streamlit Dashboard
+# Step 6: POS Anomaly Simulation & Autoencoder Training
+python -m src.fraud_detection --models-dir models/ --reports-dir reports/
+
+# Step 7: Launch Interactive Streamlit Dashboard
 streamlit run app.py
 ```
 
@@ -151,5 +203,5 @@ pytest -v tests/
 - [x] **Phase 1**: Data Engineering, Imputation, Lags/Rolling Windows & Chronological Split
 - [x] **Phase 2**: Hypothesis Testing (Welch's t-test / ANOVA) & Store Clustering (K-Means / PCA)
 - [x] **Phase 3**: Multi-Model Forecasting Benchmark (Ridge, XGBoost, MLP) & Serialization
-- [x] **Phase 4**: POS Return Fraud Simulation & PyTorch Autoencoder Anomaly Detection
-- [x] **Phase 5**: Executive Streamlit BI Dashboard (5-Tab Power BI layout)
+- [x] **Phase 4**: POS Return Fraud Simulation & Bottleneck Autoencoder Anomaly Detection
+- [x] **Phase 5**: Executive Streamlit BI Dashboard (4-Tab Power BI layout with Scenario Simulation)
